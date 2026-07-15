@@ -45,6 +45,7 @@ export default defineConfig({
         { text: "Recipes", items: [
           { text: "Authenticate", link: "/recipes/authenticate" },
           { text: "Create Resource", link: "/recipes/create-resource" },
+          { text: "Apply Tags & Filters", link: "/recipes/apply-tags-and-filters" },
           { text: "Upload Document", link: "/recipes/upload-document" },
           { text: "Pagination", link: "/recipes/pagination" },
           { text: "Error Handling", link: "/recipes/error-handling" },
