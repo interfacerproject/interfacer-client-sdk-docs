@@ -35,6 +35,7 @@ export default defineConfig({
           { text: "Configuration", link: "/guides/configuration" },
           { text: "Files & Hashing", link: "/guides/files-and-hashing" },
           { text: "Signing & Crypto", link: "/guides/signing-and-crypto" },
+          { text: "Apollo Migration", link: "/guides/apollo-migration" },
           { text: "Tagging System", link: "/guides/tagging-system" },
           { text: "Requests", link: "/guides/requests" },
           { text: "Responses", link: "/guides/responses" },
