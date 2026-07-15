@@ -50,6 +50,7 @@ export default defineConfig({
           { text: "Apply Tags & Filters", link: "/recipes/apply-tags-and-filters" },
           { text: "Upload Document", link: "/recipes/upload-document" },
           { text: "DPP Create & Query", link: "/recipes/dpp-create-and-query" },
+          { text: "Send & Read Messages", link: "/recipes/send-message" },
           { text: "Pagination", link: "/recipes/pagination" },
           { text: "Error Handling", link: "/recipes/error-handling" },
         ]},
