@@ -4,3 +4,13 @@
 *.db
 .beads-credential-key
 .beads/proxieddb/
+
+# JupyterLite build artifacts
+_site/
+.jupyterlite.doit.db
+*.pyc
+__pycache__/
+
+# Python virtual environment
+venv/
+.venv/
