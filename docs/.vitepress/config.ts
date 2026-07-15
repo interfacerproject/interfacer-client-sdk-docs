@@ -4,7 +4,7 @@ export default defineConfig({
   title: "Interfacer Client SDK",
   description: "TypeScript SDK for the Interfacer ecosystem — Zenflows, DPP, Inbox, Wallet, Social",
   lang: "en-US",
-  base: "/",
+  base: "/interfacer-client-sdk-docs/",
 
   head: [
     ["link", { rel: "icon", href: "/favicon.ico" }],
