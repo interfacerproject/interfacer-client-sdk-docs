@@ -1,7 +1,10 @@
 <template>
   <div class="playground">
     <div class="playground-header">
-      <span class="playground-label">{{ label }}</span>
+      <span class="playground-label">
+        {{ label }}
+        <span v-if="wcReady" class="badge-wc">WebContainers</span>
+      </span>
       <div class="playground-actions">
         <button @click="run" :disabled="running" class="btn-run">
           {{ running ? 'Running...' : '▶ Run' }}
@@ -17,6 +20,7 @@
         :readonly="running"
         spellcheck="false"
         class="code-editor"
+        @input="autoResize"
       ></textarea>
     </div>
     <div class="playground-output" v-if="output.length">
@@ -37,7 +41,10 @@ const props = defineProps<{
 const currentCode = ref(props.code);
 const output = ref<Array<{ type: string; text: string }>>([]);
 const running = ref(false);
+const wcReady = ref(false);
 const editorRef = ref<HTMLTextAreaElement>();
+
+let wcInstance: any = null;
 
 function reset() {
   currentCode.value = props.code;
@@ -48,10 +55,65 @@ function copy() {
   navigator.clipboard.writeText(currentCode.value);
 }
 
-function run() {
-  running.value = true;
-  output.value = [];
+async function bootWebContainer() {
+  try {
+    const { WebContainer } = await import("@webcontainer/api");
+    wcInstance = await WebContainer.boot();
+    wcReady.value = true;
+  } catch {
+    // WebContainers unavailable — fall back to iframe sandbox
+  }
+}
 
+async function runWithWebContainer() {
+  const logs: Array<{ type: string; text: string }> = [];
+
+  await wcInstance.mount({
+    "index.js": {
+      file: {
+        contents: [
+          "const _log = console.log;",
+          "const _err = console.error;",
+          "const _warn = console.warn;",
+          'console.log = (...a) => _log("LOG:", ...a);',
+          'console.error = (...a) => _err("ERR:", ...a);',
+          'console.warn = (...a) => _warn("WARN:", ...a);',
+          "try {",
+          currentCode.value,
+          "} catch (err) {",
+          "  console.error(err.message);",
+          "}",
+        ].join("\n"),
+      },
+    },
+  });
+
+  const process = await wcInstance.spawn("node", ["index.js"]);
+
+  process.output.pipeTo(
+    new WritableStream({
+      write(data: string) {
+        const lines = data.trim().split("\n");
+        for (const line of lines) {
+          if (line.startsWith("LOG:"))
+            logs.push({ type: "log", text: line.slice(4) });
+          else if (line.startsWith("ERR:"))
+            logs.push({ type: "error", text: line.slice(4) });
+          else if (line.startsWith("WARN:"))
+            logs.push({ type: "warn", text: line.slice(5) });
+          else if (line)
+            logs.push({ type: "log", text: line });
+        }
+        output.value = [...logs];
+      },
+    })
+  );
+
+  await process.exit;
+  running.value = false;
+}
+
+function runWithIframe() {
   const logs: Array<{ type: string; text: string }> = [];
 
   const handler = (event: MessageEvent) => {
@@ -72,22 +134,22 @@ function run() {
   const iframe = document.createElement("iframe");
   iframe.style.display = "none";
   iframe.sandbox.add("allow-scripts");
-  iframe.srcdoc = `
-    <script>
-      var _log = console.log.bind(console);
-      console.log = function(){ window.parent.postMessage({ type: 'log', text: Array.from(arguments).map(function(a){ return typeof a === 'object' ? JSON.stringify(a,null,2) : String(a); }).join(' ') }, '*'); };
-      console.error = function(){ window.parent.postMessage({ type: 'error', text: Array.from(arguments).map(function(a){ return a instanceof Error ? a.message : String(a); }).join(' ') }, '*'); };
-      console.warn = function(){ window.parent.postMessage({ type: 'warn', text: Array.from(arguments).map(String).join(' ') }, '*'); };
-    <\/script>
-    <script>
-      try {
-        ${currentCode.value.replace(/<\/script>/gi, '<\\/script>')}
-      } catch (err) {
-        console.error(err.message);
-      }
-      window.parent.postMessage({ type: 'done' }, '*');
-    <\/script>
-  `;
+
+  const safeCode = currentCode.value.replace(/<\/script>/g, "<\\/script>");
+
+  iframe.srcdoc =
+    "<script>" +
+    "console.log=function(){window.parent.postMessage({type:'log',text:Array.from(arguments).map(function(a){return typeof a==='object'?JSON.stringify(a,null,2):String(a)}).join(' ')},'*')};" +
+    "console.error=function(){window.parent.postMessage({type:'error',text:Array.from(arguments).map(function(a){return a instanceof Error?a.message:String(a)}).join(' ')},'*')};" +
+    "console.warn=function(){window.parent.postMessage({type:'warn',text:Array.from(arguments).map(String).join(' ')},'*')};" +
+    "<\/script>" +
+    "<script>" +
+    "try{" +
+    safeCode +
+    "}catch(err){console.error(err.message)}" +
+    "window.parent.postMessage({type:'done'},'*')" +
+    "<\/script>";
+
   document.body.appendChild(iframe);
 
   const timeout = setTimeout(() => {
@@ -101,7 +163,13 @@ function run() {
   }, 10000);
 }
 
-// Auto-resize textarea
+function run() {
+  running.value = true;
+  output.value = [];
+  if (wcInstance) runWithWebContainer();
+  else runWithIframe();
+}
+
 function autoResize() {
   const el = editorRef.value;
   if (!el) return;
@@ -111,6 +179,7 @@ function autoResize() {
 
 onMounted(() => {
   autoResize();
+  bootWebContainer();
 });
 </script>
 
@@ -121,7 +190,6 @@ onMounted(() => {
   overflow: hidden;
   margin: 16px 0;
 }
-
 .playground-header {
   display: flex;
   justify-content: space-between;
@@ -130,20 +198,27 @@ onMounted(() => {
   background: var(--vp-c-bg-soft);
   border-bottom: 1px solid var(--vp-c-divider);
 }
-
 .playground-label {
   font-size: 13px;
   font-weight: 600;
   color: var(--vp-c-text-2);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-}
-
-.playground-actions {
   display: flex;
-  gap: 6px;
+  align-items: center;
+  gap: 8px;
 }
-
+.badge-wc {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: var(--vp-c-brand);
+  color: #fff;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.playground-actions { display: flex; gap: 6px; }
 .playground-actions button {
   padding: 4px 12px;
   font-size: 12px;
@@ -154,26 +229,9 @@ onMounted(() => {
   color: var(--vp-c-text-1);
   transition: background 0.2s;
 }
-
-.playground-actions button:hover:not(:disabled) {
-  background: var(--vp-c-bg-soft);
-}
-
-.playground-actions button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.btn-run {
-  color: var(--vp-c-brand) !important;
-  border-color: var(--vp-c-brand) !important;
-  font-weight: 600;
-}
-
-.playground-editor {
-  padding: 0;
-}
-
+.playground-actions button:hover:not(:disabled) { background: var(--vp-c-bg-soft); }
+.playground-actions button:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-run { color: var(--vp-c-brand) !important; border-color: var(--vp-c-brand) !important; font-weight: 600; }
 .code-editor {
   width: 100%;
   min-height: 120px;
@@ -188,12 +246,7 @@ onMounted(() => {
   color: var(--vp-code-block-color);
   tab-size: 2;
 }
-
-.playground-output {
-  border-top: 1px solid var(--vp-c-divider);
-  background: var(--vp-c-bg-soft);
-}
-
+.playground-output { border-top: 1px solid var(--vp-c-divider); background: var(--vp-c-bg-soft); }
 .output-header {
   padding: 6px 16px;
   font-size: 11px;
@@ -203,7 +256,6 @@ onMounted(() => {
   color: var(--vp-c-text-3);
   border-bottom: 1px solid var(--vp-c-divider);
 }
-
 .output-content {
   padding: 12px 16px;
   margin: 0;
@@ -215,17 +267,7 @@ onMounted(() => {
   white-space: pre-wrap;
   word-break: break-all;
 }
-
-.output-content code {
-  display: block;
-  color: var(--vp-c-text-1);
-}
-
-.output-content code.error {
-  color: var(--vp-c-danger-1);
-}
-
-.output-content code.warn {
-  color: var(--vp-c-warning-1);
-}
+.output-content code { display: block; color: var(--vp-c-text-1); }
+.output-content code.error { color: var(--vp-c-danger-1); }
+.output-content code.warn { color: var(--vp-c-warning-1); }
 </style>
