@@ -1,4 +1,4 @@
-name: Deploy JupyterLite to GitHub Pages
+name: Deploy VitePress to GitHub Pages
 
 on:
   push:
@@ -20,22 +20,31 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - uses: pnpm/action-setup@v2
         with:
-          python-version: "3.12"
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
 
       - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
+        run: pnpm install
 
-      - name: Build JupyterLite
-        run: |
-          jupyter lite build --contents notebooks --output-dir _site
+      - name: Generate API reference
+        run: pnpm docs:api
+
+      - name: Test examples
+        run: pnpm test:examples || true
+
+      - name: Build VitePress
+        run: pnpm docs:build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: _site
+          path: docs/.vitepress/dist
 
   deploy:
     needs: build
