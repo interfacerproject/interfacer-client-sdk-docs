@@ -73,6 +73,13 @@ console.log('// -> ["person_id_1", "person_id_2", ...]';`;
 
 # Like & Follow
 
+::: warning Legacy Retro-Compatibility
+The ActivityPub-based social system (likes, follows) is **legacy** and not actively used in
+the current Interfacer GUI. Project feedback now uses the dedicated
+[Feedback & Reviews](/guides/feedback-reviews) REST API for star ratings and threaded comments.
+This module is kept for backward compatibility.
+:::
+
 Social interactions use the ActivityStreams protocol via signed REST endpoints. All operations are accessed through `client.social`.
 
 ## Like a Resource

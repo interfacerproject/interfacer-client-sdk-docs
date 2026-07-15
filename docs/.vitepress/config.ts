@@ -54,6 +54,7 @@ export default defineConfig({
           { text: "Send & Read Messages", link: "/recipes/send-message" },
           { text: "Wallet Points", link: "/recipes/wallet-points" },
           { text: "Like & Follow", link: "/recipes/like-and-follow" },
+          { text: "Feedback & Reviews", link: "/guides/feedback-reviews" },
           { text: "Import GitHub/GitLab", link: "/recipes/import-github-repo" },
           { text: "Pagination", link: "/recipes/pagination" },
           { text: "Error Handling", link: "/recipes/error-handling" },

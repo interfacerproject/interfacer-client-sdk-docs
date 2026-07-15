@@ -90,6 +90,12 @@ console.log('// amount / 100 = display value';`;
 
 # Wallet Points
 
+::: warning Legacy Retro-Compatibility
+Wallet points are **still used** for awarding Idea and Strength tokens on project creation
+and contributions. However, the new **reviews, ratings, and comments** system uses the
+separate [Feedback & Reviews](/guides/feedback-reviews) REST API instead.
+:::
+
 The wallet system tracks two token types: **Idea Points** for reputation and **Strength Points** for economic value. All wallet operations are signed and require the `walletUrl` endpoint.
 
 ## Token Types
