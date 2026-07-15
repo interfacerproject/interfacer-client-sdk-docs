@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@dyne/interfacer-client':
+        specifier: ^0.3.5
+        version: 0.3.5(zenroom@5.37.2)
       shiki:
         specifier: ^1.0.0
         version: 1.29.2
@@ -144,6 +147,11 @@ packages:
         optional: true
       search-insights:
         optional: true
+
+  '@dyne/interfacer-client@0.3.5':
+    resolution: {integrity: sha512-gSnk9BWSZaoDSVCQPiDBCBNdoCubfWAbIukJLfcOOuxs/AUH7D5E+A+0kE8ykdC81f4WwFspTDywNQwtAzn3ww==}
+    peerDependencies:
+      zenroom: ^5.36.1
 
   '@esbuild/aix-ppc64@0.21.5':
     resolution: {integrity: sha512-1SDgH6ZSPTlggy1yI6+Dbkiz8xzpHJEVAlF/AM1tHPLsf5STom9rwtjE4hKAF20FfXXNTFqEYXyJNWh1GiZedQ==}
@@ -640,6 +648,10 @@ packages:
     resolution: {integrity: sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA==}
     engines: {node: 18 || 20 || >=22}
 
+  base64url@3.0.1:
+    resolution: {integrity: sha512-ir1UPr3dkwexU7FdV8qBBbNDRUhMmIekYMFZfi+C/sLNnRESKPl23nB9b2pltqfOQNnGzsDdId90AEtG5tCx4A==}
+    engines: {node: '>=6.0.0'}
+
   birpc@2.9.0:
     resolution: {integrity: sha512-KrayHS5pBi69Xi9JmvoqrIgYGDkD6mcSe/i6YKi3w5kekCLzrX4+nawcXqrj2tIp50Kw/mT/s3p+GVK0A0sKxw==}
 
@@ -1063,6 +1075,9 @@ packages:
     engines: {node: '>= 14.6'}
     hasBin: true
 
+  zenroom@5.37.2:
+    resolution: {integrity: sha512-sIdiC5O5rn67kCXj5YUIX785ReD5MjSVJtSWDQptFfmvV6vxaDbguufsvAOv2NJkwo4zNcSpdSLIG/afb7DF7A==}
+
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
 
@@ -1217,6 +1232,11 @@ snapshots:
       search-insights: 2.17.3
     transitivePeerDependencies:
       - '@algolia/client-search'
+
+  '@dyne/interfacer-client@0.3.5(zenroom@5.37.2)':
+    dependencies:
+      base64url: 3.0.1
+      zenroom: 5.37.2
 
   '@esbuild/aix-ppc64@0.21.5':
     optional: true
@@ -1660,6 +1680,8 @@ snapshots:
   assertion-error@2.0.1: {}
 
   balanced-match@4.0.4: {}
+
+  base64url@3.0.1: {}
 
   birpc@2.9.0: {}
 
@@ -2162,5 +2184,7 @@ snapshots:
       stackback: 0.0.2
 
   yaml@2.9.0: {}
+
+  zenroom@5.37.2: {}
 
   zwitch@2.0.4: {}

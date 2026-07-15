@@ -1,5 +1,5 @@
 {
-  "entryPoints": ["../interfacer-client/src/index.ts"],
+  "entryPoints": ["node_modules/@dyne/interfacer-client/dist/index.d.ts"],
   "out": "docs/api",
   "plugin": ["typedoc-plugin-markdown"],
   "readme": "none",

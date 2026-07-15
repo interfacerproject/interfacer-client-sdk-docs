@@ -20,12 +20,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Checkout SDK source
-        uses: actions/checkout@v4
-        with:
-          repository: interfacerproject/interfacer-client
-          path: ../interfacer-client
-
       - uses: pnpm/action-setup@v2
         with:
           version: 9
