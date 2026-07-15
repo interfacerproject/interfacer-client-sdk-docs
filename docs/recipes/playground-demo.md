@@ -4,74 +4,90 @@ layout: page
 
 <script setup>
 const demos = {
-  basic: `console.log('Hello from Interfacer SDK!');
-console.log('');
-console.log('Features:');
-console.log('  - Keypairoom Authentication');
-console.log('  - Resource Management');
-console.log('  - Digital Product Passport');
-console.log('  - Social & Messaging');
-console.log('  - Wallet & Points');
-console.log('  - File Hashing');
-console.log('');
-console.log('Ready to build!');`,
+  cdn: `// Import the SDK from CDN — works in any browser!
+const { InterfacerClient } = await import(
+  'https://esm.sh/@dyne/interfacer-client'
+);
 
-  config: `// Simulate endpoint derivation
+console.log('SDK loaded:', typeof InterfacerClient);
+console.log('');
+console.log('Available sub-clients:');
+console.log('  client.auth       — Authentication');
+console.log('  client.resources  — Projects & Machines');
+console.log('  client.files      — File hashing & uploads');
+console.log('  client.dpp        — Digital Product Passport');
+console.log('  client.inbox      — Messaging');
+console.log('  client.wallet     — Idea & Strength points');
+console.log('  client.social     — Likes & Follows');
+console.log('  client.tagging    — Classification');
+console.log('  client.import     — GitHub/GitLab import');
+console.log('');
+console.log('No install, no Node.js — just the browser!');`,
+
+  config: `// Derive endpoints from a single proxyUrl
 const proxyUrl = 'https://proxy.dpp-dev.ddns.dyne.org';
 
-const endpoints = {
-  zenflowsUrl: proxyUrl + '/zenflows/api',
-  dppUrl: proxyUrl + '/interfacer-dpp',
-  inboxSend: proxyUrl + '/inbox/send',
-};
+function deriveEndpoints(proxyUrl) {
+  const base = proxyUrl.replace(/\\/$/, '');
+  return {
+    zenflowsUrl: base + '/zenflows/api',
+    zenflowsFileUrl: base + '/zenflows/api/file',
+    dppUrl: base + '/interfacer-dpp',
+    inbox: {
+      send: base + '/inbox/send',
+      read: base + '/inbox/read',
+      countUnread: base + '/inbox/count-unread',
+      setRead: base + '/inbox/set-read',
+    },
+    walletUrl: base + '/wallet/token',
+    social: {
+      personBase: base + '/inbox/person',
+      economicResourceBase: base + '/inbox/economicresource',
+    },
+  };
+}
 
+const endpoints = deriveEndpoints(proxyUrl);
 console.log('Zenflows:', endpoints.zenflowsUrl);
 console.log('DPP:', endpoints.dppUrl);
-console.log('Inbox:', endpoints.inboxSend);
+console.log('Inbox:', endpoints.inbox.send);
+console.log('Wallet:', endpoints.walletUrl);
 console.log('');
 console.log('All derived from a single proxyUrl!');`,
 
-  async: `// Async code works
-async function fetchData() {
-  console.log('Fetching...');
-  await new Promise(r => setTimeout(r, 500));
-  console.log('Done! Data received.');
+  tagging: `// Tag classification system — fully client-side
+function slugifyTagValue(value) {
+  return value
+    .normalize('NFKD')
+    .replace(/[\\u0300-\\u036f]/g, '')
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
 }
 
-fetchData().catch(err => console.error(err));`,
+const raw = ['3D Printing', 'Open Source Hardware', 'IoT', '  HANDMADE  '];
+const tags = raw.map(slugifyTagValue);
 
-  npm: `// WebContainers: real Node.js environment
-// (requires pnpm docs:build && pnpm docs:serve)
-try {
-  console.log('Node.js', process.version);
-  console.log('Platform:', process.platform);
-  console.log('WebContainers is running!');
-} catch (e) {
-  console.log('Sandbox mode — no Node.js available.');
-  console.log('Run: pnpm docs:build && pnpm docs:serve');
-  console.log('to enable WebContainers with full npm access.');
-}`,
+console.log('Raw input:', raw);
+console.log('Normalized:', tags);
+console.log('');
+console.log('Tags are client-side only — no API calls needed!');`,
 };
 </script>
 
 # Playground Demo
 
-Try running these editable code snippets directly in your browser.
+Run these examples directly in your browser. Each is editable — modify and re-run to experiment.
 
-## WebContainers
+## CDN Import
 
-<Playground label="NPM / Node.js" :code="demos.npm" />
+<Playground label="SDK Import" :code="demos.cdn" />
 
-*This demo requires WebContainers (COOP/COEP headers). Use `pnpm docs:serve` for full Node.js access. Falls back to sandbox mode otherwise.*
-
-## Basic
-
-<Playground label="Basic" :code="demos.basic" />
-
-## Config
+## Endpoint Derivation
 
 <Playground label="Config" :code="demos.config" />
 
-## Async
+## Tagging
 
-<Playground label="Async" :code="demos.async" />
+<Playground label="Classification" :code="demos.tagging" />

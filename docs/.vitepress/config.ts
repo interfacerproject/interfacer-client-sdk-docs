@@ -11,20 +11,6 @@ export default defineConfig({
     ["meta", { name: "theme-color", content: "#00B4A6" }],
   ],
 
-  // WebContainers: COOP/COEP headers for SharedArrayBuffer (dev only)
-  vite: {
-    plugins: [{
-      name: "coop-coep-headers",
-      configureServer(server) {
-        server.middlewares.use((_req, res, next) => {
-          res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
-          res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
-          next();
-        });
-      },
-    }],
-  },
-
   themeConfig: {
     logo: "/logo.svg",
 

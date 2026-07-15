@@ -7,10 +7,6 @@ settings:
 importers:
 
   .:
-    dependencies:
-      '@webcontainer/api':
-        specifier: ^1.6.4
-        version: 1.6.4
     devDependencies:
       shiki:
         specifier: ^1.0.0
@@ -628,9 +624,6 @@ packages:
 
   '@vueuse/shared@12.8.2':
     resolution: {integrity: sha512-dznP38YzxZoNloI0qpEfpkms8knDtaoQ6Y/sfS0L7Yki4zh40LFHEhur0odJC6xTHG5dxWVPiUWBXn+wCG2s5w==}
-
-  '@webcontainer/api@1.6.4':
-    resolution: {integrity: sha512-r9sHCXg1FcC1AMgppGwAc0vYWaQhqvg282cnsuPbJEzYnWifAdCVvg+8ngJUEHyHcomhJJp+/zuytite4ITHLw==}
 
   algoliasearch@5.55.2:
     resolution: {integrity: sha512-OyacJsaeuLUvGWOynNqYc6sx88XvyoG39wMT8SYqL3l9wwaorDW/LPRbUPfhzw0bWsUWzNCZTnFYOrWFBKsUaw==}
@@ -1644,8 +1637,6 @@ snapshots:
       vue: 3.5.39(typescript@5.8.3)
     transitivePeerDependencies:
       - typescript
-
-  '@webcontainer/api@1.6.4': {}
 
   algoliasearch@5.55.2:
     dependencies:

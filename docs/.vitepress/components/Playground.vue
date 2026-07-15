@@ -1,10 +1,7 @@
 <template>
   <div class="playground">
     <div class="playground-header">
-      <span class="playground-label">
-        {{ label }}
-        <span v-if="wcReady" class="badge-wc">WebContainers</span>
-      </span>
+      <span class="playground-label">{{ label }}</span>
       <div class="playground-actions">
         <button @click="run" :disabled="running" class="btn-run">
           {{ running ? 'Running...' : '▶ Run' }}
@@ -41,10 +38,7 @@ const props = defineProps<{
 const currentCode = ref(props.code);
 const output = ref<Array<{ type: string; text: string }>>([]);
 const running = ref(false);
-const wcReady = ref(false);
 const editorRef = ref<HTMLTextAreaElement>();
-
-let wcInstance: any = null;
 
 function reset() {
   currentCode.value = props.code;
@@ -55,65 +49,10 @@ function copy() {
   navigator.clipboard.writeText(currentCode.value);
 }
 
-async function bootWebContainer() {
-  try {
-    const { WebContainer } = await import("@webcontainer/api");
-    wcInstance = await WebContainer.boot();
-    wcReady.value = true;
-  } catch {
-    // WebContainers unavailable — fall back to iframe sandbox
-  }
-}
+function run() {
+  running.value = true;
+  output.value = [];
 
-async function runWithWebContainer() {
-  const logs: Array<{ type: string; text: string }> = [];
-
-  await wcInstance.mount({
-    "index.js": {
-      file: {
-        contents: [
-          "const _log = console.log;",
-          "const _err = console.error;",
-          "const _warn = console.warn;",
-          'console.log = (...a) => _log("LOG:", ...a);',
-          'console.error = (...a) => _err("ERR:", ...a);',
-          'console.warn = (...a) => _warn("WARN:", ...a);',
-          "try {",
-          currentCode.value,
-          "} catch (err) {",
-          "  console.error(err.message);",
-          "}",
-        ].join("\n"),
-      },
-    },
-  });
-
-  const process = await wcInstance.spawn("node", ["index.js"]);
-
-  process.output.pipeTo(
-    new WritableStream({
-      write(data: string) {
-        const lines = data.trim().split("\n");
-        for (const line of lines) {
-          if (line.startsWith("LOG:"))
-            logs.push({ type: "log", text: line.slice(4) });
-          else if (line.startsWith("ERR:"))
-            logs.push({ type: "error", text: line.slice(4) });
-          else if (line.startsWith("WARN:"))
-            logs.push({ type: "warn", text: line.slice(5) });
-          else if (line)
-            logs.push({ type: "log", text: line });
-        }
-        output.value = [...logs];
-      },
-    })
-  );
-
-  await process.exit;
-  running.value = false;
-}
-
-function runWithIframe() {
   const logs: Array<{ type: string; text: string }> = [];
 
   const handler = (event: MessageEvent) => {
@@ -142,8 +81,9 @@ function runWithIframe() {
     "console.log=function(){window.parent.postMessage({type:'log',text:Array.from(arguments).map(function(a){return typeof a==='object'?JSON.stringify(a,null,2):String(a)}).join(' ')},'*')};" +
     "console.error=function(){window.parent.postMessage({type:'error',text:Array.from(arguments).map(function(a){return a instanceof Error?a.message:String(a)}).join(' ')},'*')};" +
     "console.warn=function(){window.parent.postMessage({type:'warn',text:Array.from(arguments).map(String).join(' ')},'*')};" +
+    "window.onerror=function(m){console.error(m)};" +
     "<\/script>" +
-    "<script>" +
+    "<script type=module>" +
     "try{" +
     safeCode +
     "}catch(err){console.error(err.message)}" +
@@ -163,13 +103,6 @@ function runWithIframe() {
   }, 10000);
 }
 
-function run() {
-  running.value = true;
-  output.value = [];
-  if (wcInstance) runWithWebContainer();
-  else runWithIframe();
-}
-
 function autoResize() {
   const el = editorRef.value;
   if (!el) return;
@@ -177,10 +110,7 @@ function autoResize() {
   el.style.height = Math.max(el.scrollHeight, 120) + "px";
 }
 
-onMounted(() => {
-  autoResize();
-  bootWebContainer();
-});
+onMounted(() => autoResize());
 </script>
 
 <style scoped>
@@ -204,19 +134,6 @@ onMounted(() => {
   color: var(--vp-c-text-2);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.badge-wc {
-  font-size: 10px;
-  font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 3px;
-  background: var(--vp-c-brand);
-  color: #fff;
-  text-transform: none;
-  letter-spacing: 0;
 }
 .playground-actions { display: flex; gap: 6px; }
 .playground-actions button {

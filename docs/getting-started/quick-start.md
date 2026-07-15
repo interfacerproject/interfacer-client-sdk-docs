@@ -3,37 +3,24 @@ layout: page
 ---
 
 <script setup>
-const configDemo = `// Simulate InterfacerClient configuration
+const configDemo = `// Import the SDK from CDN
+const { InterfacerClient, createConfig, deriveEndpointsFromProxy } = await import(
+  'https://esm.sh/@dyne/interfacer-client'
+);
+
 const proxyUrl = 'https://proxy.dpp-dev.ddns.dyne.org';
+const endpoints = deriveEndpointsFromProxy(proxyUrl);
 
-function deriveEndpoints(proxyUrl) {
-  const base = proxyUrl.replace(/\\/$/, '');
-  return {
-    zenflowsUrl: base + '/zenflows/api',
-    zenflowsFileUrl: base + '/zenflows/api/file',
-    dppUrl: base + '/interfacer-dpp',
-    inbox: {
-      send: base + '/inbox/send',
-      read: base + '/inbox/read',
-      countUnread: base + '/inbox/count-unread',
-      setRead: base + '/inbox/set-read',
-    },
-    walletUrl: base + '/wallet/token',
-    social: {
-      personBase: base + '/inbox/person',
-      economicResourceBase: base + '/inbox/economicresource',
-    },
-  };
-}
+console.log('Proxy:', proxyUrl);
+console.log('');
+console.log('Zenflows:', endpoints.zenflowsUrl);
+console.log('DPP:', endpoints.dppUrl);
+console.log('Inbox:', endpoints.inbox.send);
+console.log('Wallet:', endpoints.walletUrl);
+console.log('');
+console.log('All derived from a single proxyUrl!');`;
 
-const endpoints = deriveEndpoints(proxyUrl);
-console.log('✓ Zenflows:', endpoints.zenflowsUrl);
-console.log('✓ DPP:', endpoints.dppUrl);
-console.log('✓ Inbox send:', endpoints.inbox.send);
-console.log('✓ Wallet:', endpoints.walletUrl);
-console.log('\\nAll endpoints derived from a single proxyUrl!');`;
-
-const subClientsDemo = `// List all available sub-clients (lazily initialized)
+const subClientsDemo = `// All sub-clients are lazily initialized
 const subClients = [
   'auth', 'graphql', 'resources', 'files', 'dpp',
   'inbox', 'wallet', 'social', 'tagging', 'import',
@@ -43,8 +30,8 @@ console.log('Available sub-clients:');
 subClients.forEach(function(name) {
   console.log('  client.' + name);
 });
-
-console.log('\\nAll accessed via: client.<name>');
+console.log('');
+console.log('Accessed via: client.<name>');
 console.log('Lazy-initialized on first access');`;
 </script>
 
