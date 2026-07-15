@@ -40,22 +40,17 @@ async function fetchData() {
 
 fetchData().catch(err => console.error(err));`,
 
-  npm: `// WebContainers: import real npm packages!
-// (requires COOP/COEP headers — works on docs:serve)
-console.log('Checking Node.js version...');
-console.log(process.version);
-console.log('');
-
-const now = new Date();
-console.log('Server time:', now.toISOString());
-console.log('Platform:', process.platform);
-console.log('');
-
-// You can import any npm package:
-// import chalk from 'chalk';
-// console.log(chalk.green('Success!'));
-
-console.log('WebContainers is running!');`,
+  npm: `// WebContainers: real Node.js environment
+// (requires pnpm docs:build && pnpm docs:serve)
+try {
+  console.log('Node.js', process.version);
+  console.log('Platform:', process.platform);
+  console.log('WebContainers is running!');
+} catch (e) {
+  console.log('Sandbox mode — no Node.js available.');
+  console.log('Run: pnpm docs:build && pnpm docs:serve');
+  console.log('to enable WebContainers with full npm access.');
+}`,
 };
 </script>
 
