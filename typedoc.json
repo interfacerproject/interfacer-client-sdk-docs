@@ -5,6 +5,7 @@
   "readme": "none",
   "githubPages": false,
   "excludePrivate": true,
+  "skipErrorChecking": true,
   "excludeProtected": false,
   "includeVersion": true,
   "sort": ["source-order"],
