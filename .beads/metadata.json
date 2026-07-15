@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "embedded",
+  "dolt_database": "interfacer_sdk_jdocs",
+  "project_id": "5cb4e04e-419d-4df3-9b52-6a9f7d3ae133"
+}
