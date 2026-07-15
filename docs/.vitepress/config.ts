@@ -32,6 +32,7 @@ export default defineConfig({
       "/guides/": [
         { text: "Guides", items: [
           { text: "Client", link: "/guides/client" },
+          { text: "Configuration", link: "/guides/configuration" },
           { text: "Tagging System", link: "/guides/tagging-system" },
           { text: "Requests", link: "/guides/requests" },
           { text: "Responses", link: "/guides/responses" },
