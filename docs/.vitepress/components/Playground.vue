@@ -54,78 +54,46 @@ function run() {
 
   const logs: Array<{ type: string; text: string }> = [];
 
-  // Create sandbox iframe
-  const iframe = document.createElement("iframe");
-  iframe.style.display = "none";
-  iframe.sandbox.add("allow-scripts");
-  document.body.appendChild(iframe);
-
-  const iframeWindow = iframe.contentWindow!;
-  const iframeDocument = iframe.contentDocument!;
-
-  // Override console in iframe
-  iframeDocument.write(`
-    <script>
-      window.console = {
-        log: function(...args) {
-          window.parent.postMessage({ type: 'log', text: args.map(a => typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a)).join(' ') }, '*');
-        },
-        error: function(...args) {
-          window.parent.postMessage({ type: 'error', text: args.map(a => a instanceof Error ? a.message : String(a)).join(' ') }, '*');
-        },
-        warn: function(...args) {
-          window.parent.postMessage({ type: 'warn', text: args.map(a => String(a)).join(' ') }, '*');
-        }
-      };
-    <\/script>
-  `);
-
   const handler = (event: MessageEvent) => {
-    if (event.data && event.data.type) {
-      logs.push({ type: event.data.type, text: event.data.text });
-      output.value = [...logs];
+    if (!event.data || !event.data.type) return;
+    if (event.data.type === "done") {
+      window.removeEventListener("message", handler);
+      document.body.removeChild(iframe);
+      clearTimeout(timeout);
+      running.value = false;
+      return;
     }
+    logs.push({ type: event.data.type, text: event.data.text });
+    output.value = [...logs];
   };
 
   window.addEventListener("message", handler);
 
-  // Execute user code
-  const script = iframeDocument.createElement("script");
-  script.textContent = `
-    try {
-      ${currentCode.value}
-    } catch (err) {
-      console.error(err.message);
-    }
-    window.parent.postMessage({ type: 'done' }, '*');
+  const iframe = document.createElement("iframe");
+  iframe.style.display = "none";
+  iframe.sandbox.add("allow-scripts");
+  iframe.srcdoc = `
+    <script>
+      var _log = console.log.bind(console);
+      console.log = function(){ window.parent.postMessage({ type: 'log', text: Array.from(arguments).map(function(a){ return typeof a === 'object' ? JSON.stringify(a,null,2) : String(a); }).join(' ') }, '*'); };
+      console.error = function(){ window.parent.postMessage({ type: 'error', text: Array.from(arguments).map(function(a){ return a instanceof Error ? a.message : String(a); }).join(' ') }, '*'); };
+      console.warn = function(){ window.parent.postMessage({ type: 'warn', text: Array.from(arguments).map(String).join(' ') }, '*'); };
+    <\/script>
+    <script>
+      try {
+        ${currentCode.value.replace(/<\/script>/gi, '<\\/script>')}
+      } catch (err) {
+        console.error(err.message);
+      }
+      window.parent.postMessage({ type: 'done' }, '*');
+    <\/script>
   `;
+  document.body.appendChild(iframe);
 
-  script.onerror = (err) => {
-    logs.push({ type: "error", text: String(err) });
-    output.value = [...logs];
-  };
-
-  iframeDocument.body.appendChild(script);
-
-  // Cleanup on done
-  const doneHandler = (event: MessageEvent) => {
-    if (event.data?.type === "done") {
-      window.removeEventListener("message", handler);
-      window.removeEventListener("message", doneHandler);
-      document.body.removeChild(iframe);
-      running.value = false;
-    }
-  };
-  window.addEventListener("message", doneHandler);
-
-  // Timeout after 10s
-  setTimeout(() => {
+  const timeout = setTimeout(() => {
     if (running.value) {
       window.removeEventListener("message", handler);
-      window.removeEventListener("message", doneHandler);
-      if (document.body.contains(iframe)) {
-        document.body.removeChild(iframe);
-      }
+      document.body.removeChild(iframe);
       logs.push({ type: "error", text: "Execution timed out (10s)" });
       output.value = [...logs];
       running.value = false;
