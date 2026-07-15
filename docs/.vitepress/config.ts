@@ -5,7 +5,7 @@ export default defineConfig({
   description: "TypeScript SDK for the Interfacer ecosystem — Zenflows, DPP, Inbox, Wallet, Social",
   lang: "en-US",
   base: "/",
-  
+
   head: [
     ["link", { rel: "icon", href: "/favicon.ico" }],
     ["meta", { name: "theme-color", content: "#00B4A6" }],
@@ -13,13 +13,12 @@ export default defineConfig({
 
   themeConfig: {
     logo: "/logo.svg",
-    
+
     nav: [
       { text: "Home", link: "/" },
       { text: "Guides", link: "/getting-started/installation" },
       { text: "Recipes", link: "/recipes/authenticate" },
       { text: "API", link: "/api/" },
-      { text: "Examples", link: "/examples/" },
     ],
 
     sidebar: {
@@ -37,6 +36,8 @@ export default defineConfig({
           { text: "Responses", link: "/guides/responses" },
           { text: "Errors", link: "/guides/errors" },
         ]},
+        { text: "Architecture", link: "/guides/architecture" },
+        { text: "Changelog", link: "/guides/changelog" },
       ],
       "/recipes/": [
         { text: "Recipes", items: [
@@ -45,6 +46,31 @@ export default defineConfig({
           { text: "Upload Document", link: "/recipes/upload-document" },
           { text: "Pagination", link: "/recipes/pagination" },
           { text: "Error Handling", link: "/recipes/error-handling" },
+        ]},
+      ],
+      "/api/": [
+        { text: "API Reference", items: [
+          { text: "Overview", link: "/api/" },
+          { text: "InterfacerClient", link: "/api/classes/InterfacerClient" },
+          { text: "AuthClient", link: "/api/classes/AuthClient" },
+          { text: "ResourceClient", link: "/api/classes/ResourceClient" },
+          { text: "FileClient", link: "/api/classes/FileClient" },
+          { text: "DppClient", link: "/api/classes/DppClient" },
+          { text: "InboxClient", link: "/api/classes/InboxClient" },
+          { text: "WalletClient", link: "/api/classes/WalletClient" },
+          { text: "SocialClient", link: "/api/classes/SocialClient" },
+          { text: "TaggingClient", link: "/api/classes/TaggingClient" },
+          { text: "ImportClient", link: "/api/classes/ImportClient" },
+          { text: "GraphQLClient", link: "/api/classes/GraphQLClient" },
+        ]},
+        { text: "Configuration", items: [
+          { text: "InterfacerConfig", link: "/api/interfaces/InterfacerConfig" },
+          { text: "KeyStorage", link: "/api/interfaces/KeyStorage" },
+        ]},
+        { text: "Types", items: [
+          { text: "ProjectType", link: "/api/enumerations/ProjectType" },
+          { text: "DppDocument", link: "/api/interfaces/DppDocument" },
+          { text: "Functions", link: "/api/functions/" },
         ]},
       ],
     },
