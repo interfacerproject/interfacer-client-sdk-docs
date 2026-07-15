@@ -1,3 +1,37 @@
+---
+layout: page
+---
+
+<script setup>
+const paginationDemo = `// Cursor-based pagination demo
+const pages = [
+  { cursor: 'a1', items: ['Project Alpha', 'Project Beta', 'Project Gamma'] },
+  { cursor: 'a2', items: ['Project Delta', 'Project Epsilon'] },
+  { cursor: null, items: ['Project Zeta'] },
+];
+
+var cursor = undefined;
+var pageNum = 1;
+
+function fetchPage(after) {
+  var idx = after ? pages.findIndex(function(p) { return p.cursor === after; }) + 1 : 0;
+  return pages[idx] || { cursor: null, items: [] };
+}
+
+do {
+  var page = fetchPage(cursor);
+  console.log('--- Page ' + pageNum + ' ---');
+  page.items.forEach(function(item) { console.log('  ' + item); });
+
+  cursor = page.cursor;
+  pageNum++;
+
+  if (!cursor) {
+    console.log('\\nNo more pages. Total: ' + pages.reduce(function(s,p){ return s + p.items.length; }, 0) + ' items');
+  }
+} while (cursor);`;
+</script>
+
 # Pagination
 
 Cursor-based pagination for resource lists.
@@ -16,24 +50,7 @@ const page = await client.resources.listResources(
 
 ## Forward Pagination
 
-```ts
-let cursor: string | undefined;
-
-do {
-  const page = await client.resources.listResources(
-    {},
-    { first: 10, after: cursor }
-  );
-
-  for (const { node } of page.edges) {
-    console.log(node.id);
-  }
-
-  cursor = page.pageInfo.hasNextPage
-    ? page.pageInfo.endCursor
-    : undefined;
-} while (cursor);
-```
+<Playground label="Pagination Loop" :code="paginationDemo" />
 
 ## Backward Pagination
 
@@ -41,15 +58,6 @@ do {
 const page = await client.resources.listResources(
   {},
   { last: 10, before: cursor }
-);
-```
-
-## Project Listing
-
-```ts
-const projects = await client.resources.getProjects(
-  { status: "PUBLISHED" },   // filter
-  { first: 20 }               // pagination
 );
 ```
 
