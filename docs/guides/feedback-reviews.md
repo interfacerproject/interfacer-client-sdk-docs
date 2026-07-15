@@ -3,37 +3,37 @@ layout: page
 ---
 
 <script setup>
-const reviewDemo = `// interfacer-feedback-service — REST API for reviews & comments
-// Currently consumed directly in the GUI, not yet in the SDK.
+const sdkDemo = `// SDK FeedbackClient — reviews & comments via client.feedback
+import { InterfacerClient, createConfig } from '@dyne/interfacer-client';
 
-console.log('// Reviews (1-5 stars + optional text)');
-console.log('');
-console.log('// POST   /api/v1/projects/:ulid/reviews');
-console.log('// GET    /api/v1/projects/:ulid/reviews');
-console.log('// GET    /api/v1/projects/:ulid/reviews/summary');
-console.log('// GET    /api/v1/projects/:ulid/reviews/mine');
-console.log('// DELETE /api/v1/reviews/:id');
-console.log('');
-console.log('// Comments (threaded, replies via parent_id)');
-console.log('');
-console.log('// POST   /api/v1/projects/:ulid/comments');
-console.log('// GET    /api/v1/projects/:ulid/comments');
-console.log('// DELETE /api/v1/comments/:id');
-console.log('');
-console.log('// Auth: DID-signed via did-sign/did-pk headers');
-console.log('// (same pattern as DPP client)';
-console.log('');
-console.log('// Configuration:');
-console.log('// NEXT_PUBLIC_FEEDBACK_URL = service base URL';`;
+const client = new InterfacerClient(createConfig({
+  proxyUrl: 'https://proxy.dpp-dev.ddns.dyne.org',
+  feedbackUrl: process.env.NEXT_PUBLIC_FEEDBACK_URL,
+}));
 
-const createReview = `// Create a review (1-5 stars)
-// POST /api/v1/projects/:ulid/reviews
+// All methods available through client.feedback:
+console.log('// Reviews:');
+console.log('// client.feedback.createReview(projectUlid, rating, content)');
+console.log('// client.feedback.getReviews(projectUlid, params)');
+console.log('// client.feedback.getReviewSummary(projectUlid)');
+console.log('// client.feedback.getUserReview(projectUlid)');
+console.log('// client.feedback.deleteReview(reviewId)');
+console.log('');
+console.log('// Comments:');
+console.log('// client.feedback.createComment(projectUlid, content, parentId)');
+console.log('// client.feedback.getComments(projectUlid, params)');
+console.log('// client.feedback.deleteComment(commentId)';
+console.log('');
+console.log('// Auth: DID-signed (did-sign + did-pk headers)');
+console.log('// Same pattern as client.dpp — no manual signing needed';`;
 
-console.log('await feedbackApi.createReview(');
-console.log('  projectUlid,');
-console.log('  4,                      // rating 1-5');
-console.log('  "Great documentation!"   // optional text');
-console.log(');');
+const createReview = `// Create a review (1-5 stars, one per user per project)
+console.log('const review = await client.feedback');
+console.log('  .createReview(');
+console.log('    projectUlid,');
+console.log('    4,                      // rating 1-5');
+console.log('    "Great documentation!"   // optional text');
+console.log('  );');
 console.log('');
 console.log('// Returns Review:');
 console.log('{');
@@ -44,166 +44,165 @@ console.log('  rating: 4,');
 console.log('  content: "Great documentation!",');
 console.log('  created_at: "2026-01-15T...",');
 console.log('  updated_at: "2026-01-15T..."');
-console.log('}');
+console.log('}';
 console.log('');
-console.log('// Only one review per user per project');
-console.log('// Creating a second one updates the existing';`;
+console.log('// Each user can only have one review per project.');
+console.log('// Creating a second one updates the existing.';`;
 
-const summaryDemo = `// Get aggregated review stats
-// GET /api/v1/projects/:ulid/reviews/summary
-
-console.log('const summary = await feedbackApi');
-console.log('  .getReviewSummary(projectUlid);');
-console.log('');
-console.log('// Returns ReviewSummary:');
-console.log('{');
-console.log('  average_rating: 4.2,');
-console.log('  total_reviews: 15,');
-console.log('  rating_distribution: {');
-console.log('    1: 0, 2: 1, 3: 3, 4: 6, 5: 5');
-console.log('  }');
-console.log('}';`;
-
-const commentDemo = `// Post a comment (optionally threaded)
-// POST /api/v1/projects/:ulid/comments
-
+const commentDemo = `// Post a comment (threaded via parentId)
 console.log('// Top-level comment:');
-console.log('await feedbackApi.createComment(');
-console.log('  projectUlid,');
-console.log('  "Nice work! What license?"');
-console.log(');');
+console.log('const comment = await client.feedback');
+console.log('  .createComment(');
+console.log('    projectUlid,');
+console.log('    "Nice work! What license?"');
+console.log('  );');
 console.log('');
 console.log('// Reply to a comment:');
-console.log('await feedbackApi.createComment(');
-console.log('  projectUlid,');
-console.log('  "It is CC-BY-SA 4.0",');
-console.log('  parentCommentId    // reply to this');
-console.log(');');
+console.log('const reply = await client.feedback');
+console.log('  .createComment(');
+console.log('    projectUlid,');
+console.log('    "CC-BY-SA 4.0",');
+console.log('    parentCommentId    // reply to this');
+console.log('  );';
 console.log('');
-console.log('// Returns Comment:');
-console.log('{');
-console.log('  id: "...",');
-console.log('  project_ulid: "...",');
-console.log('  user_ulid: "...",');
-console.log('  parent_id: null,           // or parent id');
-console.log('  content: "...",');
-console.log('  attachments: null,         // JSON array');
-console.log('  status: "active",');
-console.log('  created_at: "...",');
-console.log('  updated_at: "..."');
-console.log('}';`;
+console.log('// Fetch comment thread:');
+console.log('const { comments } = await client.feedback');
+console.log('  .getComments(projectUlid, {');
+console.log('    parent_id: reviewId  // fetch replies');
+console.log('  });';`;
 </script>
 
 # Feedback — Reviews & Comments
 
-The Interfacer ecosystem now uses **interfacer-feedback-service** — a dedicated REST API for reviews (1-5 star ratings with text) and threaded comments. This replaces the legacy ActivityPub-based social system for project feedback.
+The `client.feedback` module provides access to the **interfacer-feedback-service** — a dedicated REST API for reviews (1-5 star ratings with text) and threaded comments. It replaces the legacy ActivityPub-based social system for project feedback.
 
-> **Note:** The `WalletClient` and `SocialClient` in the SDK are **legacy retro-compatibility wrappers**. The wallet is still used for point awards on project creation, but social interactions (likes, follows) have been superseded by the feedback service.
+> The `FeedbackClient` was added in SDK v0.4.0. It uses the same DID-signing pattern as `DppClient`.
 
-## Feedback API (HTTP REST)
+## Configuration
 
-<Playground label="API Overview" :code="reviewDemo" />
+```ts
+const client = new InterfacerClient(
+  createConfig({
+    proxyUrl: "https://proxy.dpp-dev.ddns.dyne.org",
+    feedbackUrl: process.env.NEXT_PUBLIC_FEEDBACK_URL,
+  })
+);
+```
 
-The feedback service is currently consumed directly in the GUI via `lib/feedback.ts` using a `useFeedbackApi()` React hook. Authentication uses DID-signed headers — the same pattern as the DPP client.
+The `feedbackUrl` is **not derived from `proxyUrl`** — pass it explicitly.
 
-## Endpoints
+## API Overview
 
-### Reviews
+<Playground label="SDK API" :code="sdkDemo" />
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| `POST` | `/api/v1/projects/:ulid/reviews` | Signed | Create or update review (1 per user) |
-| `GET` | `/api/v1/projects/:ulid/reviews` | Public | List reviews (paginated) |
-| `GET` | `.../reviews/summary` | Public | Aggregated stats |
-| `GET` | `.../reviews/mine` | Signed | Current user's review |
-| `DELETE` | `/api/v1/reviews/:id` | Signed | Delete own review |
+## Reviews
 
-### Comments
-
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| `POST` | `/api/v1/projects/:ulid/comments` | Signed | Post comment (reply via `parent_id`) |
-| `GET` | `/api/v1/projects/:ulid/comments` | Public | List comments (paginated) |
-| `DELETE` | `/api/v1/comments/:id` | Signed | Soft-delete own comment |
-
-## Create a Review
+### Create a Review
 
 <Playground label="Create Review" :code="createReview" />
 
-Each user can only have **one review per project**. Submitting a second review overwrites the previous one. Ratings are integers 1-5. Content is optional markdown text.
+Each user can only have **one review per project**. Submitting a second one updates the existing. Ratings are integers 1-5.
 
-## Review Summary
+### Read Reviews
 
-Fetched separately for header displays:
+```ts
+// All reviews (paginated)
+const { reviews } = await client.feedback.getReviews(projectUlid, {
+  limit: 20,
+  cursor: lastTimestamp,
+});
 
-<Playground label="Summary" :code="summaryDemo" />
+// Aggregated statistics
+const summary = await client.feedback.getReviewSummary(projectUlid);
+// { average_rating: 4.2, total_reviews: 15, rating_distribution: { ... } }
 
-## Threaded Comments
+// Current user's review
+const { review } = await client.feedback.getUserReview(projectUlid);
+// review is null if user hasn't reviewed yet
 
-Comments support replies via `parent_id`:
+// Delete own review
+await client.feedback.deleteReview(reviewId);
+```
+
+## Comments
 
 <Playground label="Comments" :code="commentDemo" />
 
-The GUI renders comments as threads with indented replies under ReviewCard components. Each Review can have its own CommentThread of replies.
-
-## Pagination
-
-Both reviews and comments support cursor-based pagination:
+Comments support threading via `parent_id`. Set it to a review or comment ID for replies.
 
 ```ts
-// Review pagination
-const { reviews } = await api.getReviews(projectUlid, {
-  limit: 20,
-  cursor: lastReviewTimestamp, // Unix ms
-});
-
-// Comment pagination (optionally filtered by parent)
-const { comments } = await api.getComments(projectUlid, {
+// Paginated comments (optionally filtered by parent)
+const { comments } = await client.feedback.getComments(projectUlid, {
   limit: 50,
-  cursor: lastCommentTimestamp,
-  parent_id: "top_level_or_parent_id",
+  cursor: lastTimestamp,
+  parent_id: "specific_parent", // optional
 });
+
+// Soft-delete (only author can delete)
+await client.feedback.deleteComment(commentId);
 ```
 
-## Authentication
-
-Same DID-signing pattern as the DPP client:
+## React Hook (from interfacer-gui)
 
 ```ts
-// Request signing (from lib/feedback.ts):
-const signBody = async (body: string) => {
-  const eddsaKey = localStorage.getItem("eddsaPrivateKey") || "";
-  const data = JSON.stringify({
-    gql: Buffer.from(body, "utf8").toString("base64"),
-  });
-  const keys = JSON.stringify({ keyring: { eddsa: eddsaKey } });
+import useFeedbackApi from "lib/feedback";
 
-  const { result } = await zencode_exec(signContract, { data, keys });
-  const { eddsa_signature } = JSON.parse(result);
+function MyComponent() {
+  const api = useFeedbackApi();
 
-  return {
-    "did-sign": eddsa_signature,
-    "did-pk": publicKey,
-  };
-};
+  // Same API as client.feedback, but accessed through auth context
+  const reviews = await api.getReviews(projectUlid);
+}
 ```
 
-## Wallet Points (Retro-Compat)
+The `useFeedbackApi` hook wraps `client.feedback` with the same API shape — drop-in replacement for the old `lib/feedback.ts`.
 
-The `WalletClient` is still used for point awards on project actions:
+## Endpoints
+
+| Method | Path | Auth | SDK method |
+|--------|------|------|------------|
+| `POST` | `.../reviews` | Signed | `createReview` |
+| `GET` | `.../reviews` | Public | `getReviews` |
+| `GET` | `.../reviews/summary` | Public | `getReviewSummary` |
+| `GET` | `.../reviews/mine` | Signed | `getUserReview` |
+| `DELETE` | `/api/v1/reviews/:id` | Signed | `deleteReview` |
+| `POST` | `.../comments` | Signed | `createComment` |
+| `GET` | `.../comments` | Public | `getComments` |
+| `DELETE` | `/api/v1/comments/:id` | Signed | `deleteComment` |
+
+## Types
 
 ```ts
-// Award idea points on project creation
-await client.wallet.addPoints(userId, Token.Idea, 10);
+interface Review {
+  id: string;
+  project_ulid: string;
+  user_ulid: string;
+  rating: number;        // 1-5
+  content?: string | null;
+  created_at: string;
+  updated_at: string;
+}
 
-// Award strength points on contribution
-await client.wallet.addPoints(contributorId, Token.Strengths, 50);
+interface Comment {
+  id: string;
+  project_ulid: string;
+  user_ulid: string;
+  parent_id?: string | null;  // threaded replies
+  content: string;
+  status: string;             // "active" | "deleted"
+  created_at: string;
+  updated_at: string;
+}
+
+interface ReviewSummary {
+  average_rating: number;
+  total_reviews: number;
+  rating_distribution: Record<number, number>;
+}
 ```
-
-This may be migrated to the feedback service in the future.
 
 ## Next Steps
 
 - [DPP Create & Query](/recipes/dpp-create-and-query) — same DID-signing auth pattern
-- [Signing & Crypto](/guides/signing-and-crypto) — EdDSA key derivation and signing
-- [Configuration](/guides/configuration) — `NEXT_PUBLIC_FEEDBACK_URL` setup
+- [Configuration](/guides/configuration) — `feedbackUrl` setup
+- [API: DppClient](/api/classes/DppClient) — same DID-signing auth pattern
