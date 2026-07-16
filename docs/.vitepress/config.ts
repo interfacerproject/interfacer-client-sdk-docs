@@ -83,7 +83,6 @@ export default defineConfig({
         { text: "Types", items: [
           { text: "ProjectType", link: "/api/enumerations/ProjectType" },
           { text: "DppDocument", link: "/api/interfaces/DppDocument" },
-          { text: "Functions", link: "/api/functions/" },
         ]},
       ],
     },
