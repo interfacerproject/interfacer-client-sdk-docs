@@ -102,21 +102,37 @@ function run() {
   iframe.style.display = "none";
   iframe.sandbox.add("allow-scripts");
 
-  const safeCode = currentCode.value.replace(/<\/script>/g, "<\\/script>");
+  // Build the iframe's HTML using a Blob URL (avoids srcdoc escaping issues)
+  const html = `
+    <script>
+      console.log = function() {
+        window.parent.postMessage({ type: 'log', text: Array.from(arguments).map(function(a) {
+          return typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a);
+        }).join(' ') }, '*');
+      };
+      console.error = function() {
+        window.parent.postMessage({ type: 'error', text: Array.from(arguments).map(function(a) {
+          return a instanceof Error ? a.message : String(a);
+        }).join(' ') }, '*');
+      };
+      console.warn = function() {
+        window.parent.postMessage({ type: 'warn', text: Array.from(arguments).map(String).join(' ') }, '*');
+      };
+      window.onerror = function(m) { console.error(m); };
+    <\/script>
+    <script type="module">
+      try {
+        ${currentCode.value}
+      } catch (err) {
+        console.error(err.message);
+      }
+      window.parent.postMessage({ type: 'done' }, '*');
+    <\/script>
+  `;
 
-  iframe.srcdoc =
-    "<script>" +
-    "console.log=function(){window.parent.postMessage({type:'log',text:Array.from(arguments).map(function(a){return typeof a==='object'?JSON.stringify(a,null,2):String(a)}).join(' ')},'*')};" +
-    "console.error=function(){window.parent.postMessage({type:'error',text:Array.from(arguments).map(function(a){return a instanceof Error?a.message:String(a)}).join(' ')},'*')};" +
-    "console.warn=function(){window.parent.postMessage({type:'warn',text:Array.from(arguments).map(String).join(' ')},'*')};" +
-    "window.onerror=function(m){console.error(m)};" +
-    "<\/script>" +
-    "<script type=module>" +
-    "try{" +
-    safeCode +
-    "}catch(err){console.error(err.message)}" +
-    "window.parent.postMessage({type:'done'},'*')" +
-    "<\/script>";
+  const blob = new Blob([html], { type: "text/html" });
+  iframe.src = URL.createObjectURL(blob);
+  iframe.onload = () => URL.revokeObjectURL(iframe.src);
 
   document.body.appendChild(iframe);
 
