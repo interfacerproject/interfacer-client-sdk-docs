@@ -205,4 +205,4 @@ interface ReviewSummary {
 
 - [DPP Create & Query](/recipes/dpp-create-and-query) — same DID-signing auth pattern
 - [Configuration](/guides/configuration) — `feedbackUrl` setup
-- [API: DppClient](/api/classes/DppClient) — same DID-signing auth pattern
+- [API: FeedbackClient](/api/classes/FeedbackClient) — full method reference
