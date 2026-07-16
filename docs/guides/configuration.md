@@ -372,29 +372,6 @@ import { clearInstanceVariablesCache } from "@dyne/interfacer-client";
 clearInstanceVariablesCache();
 ```
 
-## Complete Env Var Map (GUI)
-
-Every config field and its corresponding environment variable in `interfacer-gui`:
-
-| Config field | Env var | Derived? |
-|---|---|---|
-| `zenflowsUrl` | `NEXT_PUBLIC_ZENFLOWS_URL` | ✅ |
-| `zenflowsFileUrl` | `NEXT_PUBLIC_ZENFLOWS_FILE_URL` | ✅ |
-| `dppUrl` | `NEXT_PUBLIC_DPP_URL` | ✅ |
-| `feedbackUrl` | `NEXT_PUBLIC_FEEDBACK_URL` | ❌ |
-| `inbox.send` | `NEXT_PUBLIC_INBOX_SEND` | ✅ |
-| `inbox.read` | `NEXT_PUBLIC_INBOX_READ` | ✅ |
-| `inbox.countUnread` | `NEXT_PUBLIC_INBOX_COUNT_UNREAD` | ✅ |
-| `inbox.setRead` | `NEXT_PUBLIC_INBOX_SET_READ` | ✅ |
-| `walletUrl` | `NEXT_PUBLIC_WALLET` | ✅ |
-| `social.personBase` | `NEXT_PUBLIC_SOCIAL_PERSON` | ✅ |
-| `social.economicResourceBase` | `NEXT_PUBLIC_SOCIAL_ECONOMIC_RESOURCE` | ✅ |
-| `oshUrl` | `NEXT_PUBLIC_OSH` | ✅ |
-| `loshId` | `NEXT_PUBLIC_LOSH_ID` | ❌ |
-| `zenflowsAdmin` | `NEXT_PUBLIC_ZENFLOWS_ADMIN` | ❌ |
-| `specs.machine` | `NEXT_PUBLIC_SPEC_MACHINE` | ❌ |
-| `specs.dpp` | `NEXT_PUBLIC_SPEC_DPP` | ❌ |
-
 ## Next Steps
 
 - [Authentication](/getting-started/authentication) — puts the config to work with Keypairoom auth

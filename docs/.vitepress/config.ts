@@ -16,7 +16,8 @@ export default defineConfig({
 
     nav: [
       { text: "Home", link: "/" },
-      { text: "Guides", link: "/getting-started/installation" },
+      { text: "Getting Started", link: "/getting-started/installation" },
+      { text: "Guides", link: "/guides/configuration" },
       { text: "Recipes", link: "/recipes/authenticate" },
       { text: "API", link: "/api/README" },
     ],
