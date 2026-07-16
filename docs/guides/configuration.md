@@ -3,179 +3,331 @@ layout: page
 ---
 
 <script setup>
-const proxyDemo = `import { InterfacerClient, createConfig, deriveEndpointsFromProxy } from '@dyne/interfacer-client';
+const proxyDemo = `import {
+  InterfacerClient, createConfig, deriveEndpointsFromProxy
+} from '@dyne/interfacer-client';
 
-// One-line config — everything derived
+// One-line config — all 10+ endpoints derived automatically
 const config = createConfig({
   proxyUrl: 'https://proxy.dpp-dev.ddns.dyne.org',
 });
 
 const client = new InterfacerClient(config);
 
-console.log('Derived endpoints:');
-console.log('  Zenflows:   ', config.zenflowsUrl);
-console.log('  Zenflows FS:', config.zenflowsFileUrl);
-console.log('  DPP:        ', config.dppUrl);
-console.log('  Inbox send: ', config.inbox.send);
-console.log('  Inbox read: ', config.inbox.read);
-console.log('  Inbox count:', config.inbox.countUnread);
-console.log('  Inbox set:  ', config.inbox.setRead);
-console.log('  Wallet:     ', config.walletUrl);
-console.log('  Social pers:', config.social.personBase);
-console.log('  Social ER:  ', config.social.economicResourceBase);
-console.log('  OSH:        ', config.oshUrl);`;
+// Inspect derived endpoints
+console.log('proxyUrl:', config.proxyUrl);
+console.log('');
+console.log('zenflowsUrl:      ', config.zenflowsUrl);
+console.log('zenflowsFileUrl:  ', config.zenflowsFileUrl);
+console.log('dppUrl:           ', config.dppUrl);
+console.log('inbox.send:       ', config.inbox.send);
+console.log('inbox.read:       ', config.inbox.read);
+console.log('inbox.countUnread:', config.inbox.countUnread);
+console.log('inbox.setRead:    ', config.inbox.setRead);
+console.log('walletUrl:        ', config.walletUrl);
+console.log('social.personBase:', config.social.personBase);
+console.log('social.erBase:    ', config.social.economicResourceBase);
+console.log('oshUrl:           ', config.oshUrl);`;
 
 const explicitDemo = `import { InterfacerClient, createConfig } from '@dyne/interfacer-client';
 
-// Explicit config — full control over every endpoint
+// Full explicit control — every endpoint passed directly
+// (the pattern used in interfacer-gui)
 const config = createConfig({
-  proxyUrl: 'https://proxy.dpp-dev.ddns.dyne.org',
-  // Override any derived URL:
-  dppUrl: 'https://custom-dpp.example.com/api',
-  walletUrl: 'https://wallet.example.com/v2/token',
-  // Add fields not derivable from proxyUrl:
-  zenflowsAdmin: process.env.ZENFLOWS_ADMIN_TOKEN,
+  zenflowsUrl: process.env.NEXT_PUBLIC_ZENFLOWS_URL || '',
+  zenflowsFileUrl: process.env.NEXT_PUBLIC_ZENFLOWS_FILE_URL || '',
+  dppUrl: process.env.NEXT_PUBLIC_DPP_URL || '',
+  feedbackUrl: process.env.NEXT_PUBLIC_FEEDBACK_URL || '',
+  inbox: {
+    send: process.env.NEXT_PUBLIC_INBOX_SEND || '',
+    read: process.env.NEXT_PUBLIC_INBOX_READ || '',
+    countUnread: process.env.NEXT_PUBLIC_INBOX_COUNT_UNREAD || '',
+    setRead: process.env.NEXT_PUBLIC_INBOX_SET_READ || '',
+  },
+  walletUrl: process.env.NEXT_PUBLIC_WALLET || '',
+  social: {
+    personBase: process.env.NEXT_PUBLIC_SOCIAL_PERSON || '',
+    economicResourceBase:
+      process.env.NEXT_PUBLIC_SOCIAL_ECONOMIC_RESOURCE || '',
+  },
+  oshUrl: process.env.NEXT_PUBLIC_OSH || '',
+  loshId: process.env.NEXT_PUBLIC_LOSH_ID || '',
+  zenflowsAdmin: process.env.NEXT_PUBLIC_ZENFLOWS_ADMIN || '',
   specs: {
-    machine: '01JMKY...',
-    dpp: '01JNKZ...',
+    machine: process.env.NEXT_PUBLIC_SPEC_MACHINE || '',
+    dpp: process.env.NEXT_PUBLIC_SPEC_DPP || '',
   },
 });
 
-// proxyUrl-derivable URLs use proxyUrl;
-// dppUrl and walletUrl use the explicit overrides
 const client = new InterfacerClient(config);`;
 
-const storageDemo = `import { createMemoryStorage, createConfig, InterfacerClient } from '@dyne/interfacer-client';
+const deriveDemo = `import { deriveEndpointsFromProxy } from '@dyne/interfacer-client';
 
-// In-memory storage (keys lost on page reload)
-const memoryStore = createMemoryStorage();
-
-const client = new InterfacerClient(
-  createConfig({ proxyUrl: 'https://proxy.dpp-dev.ddns.dyne.org' }),
-  memoryStore  // ← inject custom storage
+// Inspect derived endpoints without creating a client
+const endpoints = deriveEndpointsFromProxy(
+  'https://proxy.dpp-dev.ddns.dyne.org'
 );
 
-// Verify it works — set and read a key
-client.store.setItem('test-key', 'hello');
-console.log('Stored:', client.store.getItem('test-key'));
+console.log(endpoints.zenflowsUrl);
+// -> https://proxy.dpp-dev.ddns.dyne.org/zenflows/api
+console.log(endpoints.dppUrl);
+// -> https://proxy.dpp-dev.ddns.dyne.org/interfacer-dpp
+console.log(endpoints.inbox.send);
+// -> https://proxy.dpp-dev.ddns.dyne.org/inbox/send
 
-// The SDK uses this store for all auth keys:
-//   eddsaPrivateKey, eddsaPublicKey, seed,
-//   ethereumAddress, reflowPublicKey, ecdhPublicKey,
-//   bitcoinPublicKey, authId, authEmail, etc.`;
-
-const localsDemo = `import { createMemoryStorage } from '@dyne/interfacer-client';
-
-// Implement KeyStorage using localStorage
-const store = {
-  getItem: (key) => localStorage.getItem(key),
-  setItem: (key, value) => localStorage.setItem(key, value),
-  removeItem: (key) => localStorage.removeItem(key),
-  clear: () => localStorage.clear(),
-};
-
-// Now inject it when creating the client:
-// const client = new InterfacerClient(config, store);
-
-console.log('Custom localStorage adapter ready');`;
-
-const instanceDemo = `import { getInstanceVariables, clearInstanceVariablesCache } from '@dyne/interfacer-client';
-
-// getInstanceVariables fetches ResourceSpecification IDs
-// from the Zenflows GraphQL endpoint. These are used internally
-// by createProject, createMachine, and createDppResource.
-
-// The result is cached. Clear the cache when switching servers:
-// clearInstanceVariablesCache();
-
-console.log('Instance variables are fetched and cached automatically.');
-console.log('Use clearInstanceVariablesCache() when changing servers.');`;
+// Useful for debugging, logging, or composing configs manually`;
 </script>
 
 # Configuration
 
-The SDK accepts a single `InterfacerConfig` object with a `proxyUrl` that derives all other service endpoints automatically. Every field is optional — the SDK uses sensible defaults where possible.
+The SDK is configured through a single `InterfacerConfig` object passed to `createConfig()` then `new InterfacerClient()`. There are two setup modes: **derived** (one `proxyUrl` → everything) and **explicit** (every endpoint passed directly like in the GUI).
 
-## One-Line Setup
+## Two Setup Modes
 
-Pass a `proxyUrl` and everything is derived:
+### Derived Mode (one URL)
 
-<Playground label="Derived Config" :code="proxyDemo" />
+Best for simple setups — pass `proxyUrl` and all 10+ endpoints are computed automatically:
 
-## Derived Endpoint Paths
+<Playground label="Derived" :code="proxyDemo" />
 
-When you provide a `proxyUrl`, the following are derived:
+### Explicit Mode (full control)
 
-| Config field | Derived path |
+The pattern used in `interfacer-gui` — every endpoint comes from environment variables. Explicit values always take precedence over derivation:
+
+<Playground label="Explicit (GUI pattern)" :code="explicitDemo" />
+
+Use this when you need different URLs per environment (dev/staging/prod) or when services live on different hosts.
+
+## Every Config Field
+
+The `InterfacerConfig` interface:
+
+```ts
+interface InterfacerConfig {
+  proxyUrl?: string;
+  zenflowsUrl?: string;
+  zenflowsFileUrl?: string;
+  dppUrl?: string;
+  feedbackUrl?: string;
+  inbox?: { send: string; read: string; countUnread: string; setRead: string };
+  walletUrl?: string;
+  social?: { personBase: string; economicResourceBase: string };
+  oshUrl?: string;
+  location?: { autocomplete: string; lookup: string };
+  specs?: { dpp?: string; machine?: string; material?: string; product?: string; service?: string };
+  zenflowsAdmin?: string;
+  loshId?: string;
+  walletCycle?: { startDate: string; cycleLength: number };
+}
+```
+
+Every field is optional — the SDK works with whatever you provide.
+
+### `proxyUrl`
+
+| Property | |
 |---|---|
-| `zenflowsUrl` | `${proxyUrl}/zenflows/api` |
-| `zenflowsFileUrl` | `${proxyUrl}/zenflows/api/file` |
-| `dppUrl` | `${proxyUrl}/interfacer-dpp` |
+| **Type** | `string \| undefined` |
+| **Required** | No — but when present, derives all other endpoints |
+| **Derives** | 10 endpoints (see table below) |
+| **Breaks if missing** | Nothing — just don't call modules whose URLs aren't set |
+
+When `proxyUrl` is provided, `createConfig()` fills in any endpoint URLs that aren't explicitly passed. Explicit values always win.
+
+### `zenflowsUrl`
+
+| Property | |
+|---|---|
+| **Type** | `string \| undefined` |
+| **Required for** | Authentication, all GraphQL operations (resources, projects) |
+| **Derived from `proxyUrl`** | `${proxyUrl}/zenflows/api` |
+| **GUI env var** | `NEXT_PUBLIC_ZENFLOWS_URL` |
+| **Breaks if missing** | `client.auth.*`, `client.resources.*`, `client.graphql.*` |
+
+The Zenflows GraphQL API — this is the core backend. Nearly every operation except purely client-side ones (tagging) goes through this endpoint.
+
+### `zenflowsFileUrl`
+
+| Property | |
+|---|---|
+| **Type** | `string \| undefined` |
+| **Required for** | File uploads to Zenflows |
+| **Derived from `proxyUrl`** | `${proxyUrl}/zenflows/api/file` |
+| **GUI env var** | `NEXT_PUBLIC_ZENFLOWS_FILE_URL` |
+| **Breaks if missing** | `client.files.uploadToZenflows()`, `client.files.uploadToZenflowsBatch()` |
+
+This is the FormData upload endpoint for Zenflows file storage — separate from the GraphQL API. Files are uploaded by hash as the form field name.
+
+### `dppUrl`
+
+| Property | |
+|---|---|
+| **Type** | `string \| undefined` |
+| **Required for** | All DPP operations, DPP file uploads |
+| **Derived from `proxyUrl`** | `${proxyUrl}/interfacer-dpp` |
+| **GUI env var** | `NEXT_PUBLIC_DPP_URL` |
+| **Breaks if missing** | `client.dpp.*`, `client.files.uploadToDpp()`, `client.files.uploadModelsToDpp()` |
+
+The Digital Product Passport REST API. Uses DID-signing headers for all mutating requests.
+
+### `feedbackUrl`
+
+| Property | |
+|---|---|
+| **Type** | `string \| undefined` |
+| **Required for** | Reviews and comments (feedback service) |
+| **Derived from `proxyUrl`** | ❌ Not derived — must be set explicitly |
+| **GUI env var** | `NEXT_PUBLIC_FEEDBACK_URL` |
+| **Breaks if missing** | `client.feedback.*` |
+
+The feedback service is a standalone REST API, not proxied through the same gateway. Always set this explicitly.
+
+### `inbox`
+
+| Property | |
+|---|---|
+| **Type** | `{ send: string; read: string; countUnread: string; setRead: string } \| undefined` |
+| **Required for** | Sending/receiving messages |
+| **Derived from `proxyUrl`** | All 4 paths derived |
+| **GUI env vars** | `NEXT_PUBLIC_INBOX_SEND`, `NEXT_PUBLIC_INBOX_READ`, `NEXT_PUBLIC_INBOX_COUNT_UNREAD`, `NEXT_PUBLIC_INBOX_SET_READ` |
+| **Breaks if missing** | `client.inbox.*` |
+
+Four separate REST endpoints for the inbox service. All are signed with EdDSA. In derived mode, the paths follow the convention:
+
+| Sub-field | Derived path |
+|---|---|
 | `inbox.send` | `${proxyUrl}/inbox/send` |
 | `inbox.read` | `${proxyUrl}/inbox/read` |
 | `inbox.countUnread` | `${proxyUrl}/inbox/count-unread` |
 | `inbox.setRead` | `${proxyUrl}/inbox/set-read` |
-| `walletUrl` | `${proxyUrl}/wallet/token` |
+
+### `walletUrl`
+
+| Property | |
+|---|---|
+| **Type** | `string \| undefined` |
+| **Required for** | Wallet point operations |
+| **Derived from `proxyUrl`** | `${proxyUrl}/wallet/token` |
+| **GUI env var** | `NEXT_PUBLIC_WALLET` |
+| **Breaks if missing** | `client.wallet.*` |
+
+The wallet token REST API — Idea and Strength point balances, awards, and trends.
+
+### `social`
+
+| Property | |
+|---|---|
+| **Type** | `{ personBase: string; economicResourceBase: string } \| undefined` |
+| **Required for** | Legacy ActivityPub likes/follows |
+| **Derived from `proxyUrl`** | Both paths derived |
+| **GUI env vars** | `NEXT_PUBLIC_SOCIAL_PERSON`, `NEXT_PUBLIC_SOCIAL_ECONOMIC_RESOURCE` |
+| **Breaks if missing** | `client.social.*` |
+
+::: warning Legacy
+Social (ActivityPub likes + follows) is **legacy retro-compatibility**. Project feedback now uses [Feedback & Reviews](/guides/feedback-reviews) via the `feedbackUrl`.
+:::
+
+| Sub-field | Derived path |
+|---|---|
 | `social.personBase` | `${proxyUrl}/inbox/person` |
 | `social.economicResourceBase` | `${proxyUrl}/inbox/economicresource` |
-| `oshUrl` | `${proxyUrl}/osh` |
 
-## Explicit URLs
+### `oshUrl`
 
-Override any derived URL by passing it directly. Explicit values always take precedence over derivation:
+| Property | |
+|---|---|
+| **Type** | `string \| undefined` |
+| **Required for** | Open Source Hardware compliance check |
+| **Derived from `proxyUrl`** | `${proxyUrl}/osh` |
+| **GUI env var** | `NEXT_PUBLIC_OSH` |
+| **Breaks if missing** | `client.import.analyzeRepoForOsh()` |
 
-<Playground label="Explicit Config" :code="explicitDemo" />
+Posts to `${oshUrl}/analyze` with a repo URL and returns `{ ok: true/false }`.
 
-## Configuration Fields
+### `specs`
 
-### `InterfacerConfig`
+| Property | |
+|---|---|
+| **Type** | `{ dpp?: string; machine?: string; material?: string; product?: string; service?: string } \| undefined` |
+| **Required for** | `createProject` (product/service), `createMachine`, `createDppResource` when instance variables aren't available |
+| **Derived** | ❌ Not derived — fetched via `getInstanceVariables` or set explicitly |
+| **GUI env vars** | `NEXT_PUBLIC_SPEC_MACHINE`, `NEXT_PUBLIC_SPEC_DPP` |
+| **Breaks if missing** | Creation methods fall back to `getInstanceVariables`; if both are missing, creation throws |
 
-| Field | Type | Description |
-|---|---|---|
-| `proxyUrl` | `string?` | Base proxy URL — all services derived from this |
-| `zenflowsUrl` | `string?` | Zenflows GraphQL API (e.g. `/zenflows/api`) |
-| `zenflowsFileUrl` | `string?` | Zenflows file storage endpoint |
-| `dppUrl` | `string?` | DPP service base URL |
-| `inbox.send` | `string?` | Outbox POST endpoint |
-| `inbox.read` | `string?` | Inbox read endpoint |
-| `inbox.countUnread` | `string?` | Unread count endpoint |
-| `inbox.setRead` | `string?` | Mark-as-read endpoint |
-| `walletUrl` | `string?` | Wallet token service URL |
-| `social.personBase` | `string?` | ActivityPub person base URL |
-| `social.economicResourceBase` | `string?` | ActivityPub economic resource base URL |
-| `oshUrl` | `string?` | Open Source Hardware analysis service |
-| `location.autocomplete` | `string?` | Location autocomplete endpoint |
-| `location.lookup` | `string?` | Location reverse lookup endpoint |
-| `zenflowsAdmin` | `string?` | Admin token for sign-up mutations |
-| `loshId` | `string?` | Default commons agent ULID |
-| `specs.machine` | `string?` | Machine ResourceSpecification ID |
-| `specs.dpp` | `string?` | DPP ResourceSpecification ID |
-| `specs.material` | `string?` | Material ResourceSpecification ID |
-| `specs.product` | `string?` | Product ResourceSpecification ID |
-| `specs.service` | `string?` | Service ResourceSpecification ID |
-| `walletCycle.startDate` | `string?` | Wallet cycle start (ISO date) |
-| `walletCycle.cycleLength` | `number?` | Days per cycle |
+ResourceSpecification IDs are ULID strings that identify the type of resource being created. They are normally fetched automatically from Zenflows via `getInstanceVariables()`. Set them explicitly in `specs` as a fallback or when the Zenflows instance doesn't expose them.
 
-### `deriveEndpointsFromProxy`
+### `zenflowsAdmin`
 
-Returns the full set of derived endpoints from a proxy URL without creating a config. Useful for inspecting or composing configs:
+| Property | |
+|---|---|
+| **Type** | `string \| undefined` |
+| **Required for** | User registration mutations (sign-up) |
+| **GUI env var** | `NEXT_PUBLIC_ZENFLOWS_ADMIN` |
+| **Breaks if missing** | `client.auth.registerUser()` may fail |
+
+The `SIGN_UP` GraphQL mutation requires an admin token. This is a server-side secret — expose only in a secure backend, not in client code going to end users.
+
+### `loshId`
+
+| Property | |
+|---|---|
+| **Type** | `string \| undefined` |
+| **Required for** | Transfer events involving the commons |
+
+A ULID representing the default "losh" (commons) agent for resource transfer events.
+
+### `walletCycle`
+
+| Property | |
+|---|---|
+| **Type** | `{ startDate: string; cycleLength: number } \| undefined` |
+| **Required for** | Wallet trend calculations |
 
 ```ts
-const endpoints = deriveEndpointsFromProxy("https://proxy.example.com");
-// { zenflowsUrl, zenflowsFileUrl, dppUrl, inbox, walletUrl, social, oshUrl }
+walletCycle: {
+  startDate: "2026-01-01", // ISO date
+  cycleLength: 30,          // days
+}
 ```
 
-### `createConfig`
+Used by `client.wallet.getTrend()` to compute point growth over a cycle.
+
+## `deriveEndpointsFromProxy`
+
+A pure utility — computes derived endpoints without creating a config:
+
+<Playground label="Derive" :code="deriveDemo" />
+
+Returns a `DerivedEndpoints` object:
+
+```ts
+interface DerivedEndpoints {
+  zenflowsUrl: string;
+  zenflowsFileUrl: string;
+  dppUrl: string;
+  inbox: { send: string; read: string; countUnread: string; setRead: string };
+  walletUrl: string;
+  social: { personBase: string; economicResourceBase: string };
+  oshUrl: string;
+}
+```
+
+## `createConfig`
 
 ```ts
 function createConfig(config: InterfacerConfig): InterfacerConfig
 ```
 
-Returns a resolved config object. Fields explicitly set in `config` are kept; missing fields are derived from `proxyUrl`. Always use this wrapper — `InterfacerClient` calls it internally if you pass a raw config, but calling it yourself gives you the resolved config for inspection.
+Wraps the raw config. If `proxyUrl` is set, fills in any missing derived endpoints. Explicitly-set fields always take precedence. `InterfacerClient` calls this internally, but calling it yourself lets you inspect the resolved config:
+
+```ts
+const resolved = createConfig(rawConfig);
+console.log(resolved.zenflowsUrl); // guaranteed to be set if proxyUrl was provided
+```
 
 ## Key Storage
 
-The SDK needs to persist cryptographic keys between sessions. It uses the `KeyStorage` interface:
+The `InterfacerClient` constructor takes an optional second argument — a `KeyStorage` implementation:
 
 ```ts
 interface KeyStorage {
@@ -186,51 +338,65 @@ interface KeyStorage {
 }
 ```
 
-By default, `InterfacerClient` uses `localStorage` in browsers. You can inject your own storage for testing, SSR, or security.
+**Default:** If no storage is provided, the SDK tries `localStorage` (browser). If `window` is unavailable (SSR), it falls back to `createMemoryStorage()`. You rarely need to touch this unless you're testing or running on a platform without `localStorage`.
 
-### `createMemoryStorage`
+### Built-in adapters
 
-In-memory storage for testing or non-browser environments. Keys are lost on page reload:
+```ts
+import { createMemoryStorage } from "@dyne/interfacer-client";
 
-<Playground label="Memory Storage" :code="storageDemo" />
+// Ephemeral in-memory storage — keys lost on page reload
+const store = createMemoryStorage();
+const client = new InterfacerClient(config, store);
+```
 
-### Custom Storage Adapter
+### Custom storage
 
-Implement `KeyStorage` with any backend — IndexedDB, secure enclave, or your own encrypted store:
-
-<Playground label="Custom Adapter" :code="localsDemo" />
+```ts
+const client = new InterfacerClient(config, {
+  getItem: (key) => mySecureEnclave.read(key),
+  setItem: (key, value) => mySecureEnclave.write(key, value),
+  removeItem: (key) => mySecureEnclave.delete(key),
+  clear: () => mySecureEnclave.destroy(),
+});
+```
 
 ## Instance Variables
 
-The SDK automatically fetches ResourceSpecification IDs from Zenflows via `getInstanceVariables`. These are cached after the first call:
-
-<Playground label="Instance Variables" :code="instanceDemo" />
-
-**Cache clearing:** Call `clearInstanceVariablesCache()` when switching between servers or environments (e.g., staging → production).
-
-## Environment Setup (from `interfacer-gui`)
-
-Here is the real-world pattern used in the Interfacer GUI application:
+`getInstanceVariables()` fetches ResourceSpecification IDs from Zenflows at runtime. These are auto-called internally by `createProject`, `createMachine`, and `createDppResource`. The result is cached after the first fetch.
 
 ```ts
-import { InterfacerClient, createConfig } from "@dyne/interfacer-client";
+import { clearInstanceVariablesCache } from "@dyne/interfacer-client";
 
-const client = new InterfacerClient(
-  createConfig({
-    proxyUrl: process.env.NEXT_PUBLIC_PROXY_URL,
-    zenflowsAdmin: process.env.NEXT_PUBLIC_ZENFLOWS_ADMIN,
-    specs: {
-      machine: process.env.NEXT_PUBLIC_SPEC_MACHINE,
-      dpp: process.env.NEXT_PUBLIC_SPEC_DPP,
-    },
-  })
-);
+// Clear when switching servers (staging → production)
+clearInstanceVariablesCache();
 ```
 
-With a single `proxyUrl` environment variable, all 10+ service endpoints are derived automatically.
+## Complete Env Var Map (GUI)
+
+Every config field and its corresponding environment variable in `interfacer-gui`:
+
+| Config field | Env var | Derived? |
+|---|---|---|
+| `zenflowsUrl` | `NEXT_PUBLIC_ZENFLOWS_URL` | ✅ |
+| `zenflowsFileUrl` | `NEXT_PUBLIC_ZENFLOWS_FILE_URL` | ✅ |
+| `dppUrl` | `NEXT_PUBLIC_DPP_URL` | ✅ |
+| `feedbackUrl` | `NEXT_PUBLIC_FEEDBACK_URL` | ❌ |
+| `inbox.send` | `NEXT_PUBLIC_INBOX_SEND` | ✅ |
+| `inbox.read` | `NEXT_PUBLIC_INBOX_READ` | ✅ |
+| `inbox.countUnread` | `NEXT_PUBLIC_INBOX_COUNT_UNREAD` | ✅ |
+| `inbox.setRead` | `NEXT_PUBLIC_INBOX_SET_READ` | ✅ |
+| `walletUrl` | `NEXT_PUBLIC_WALLET` | ✅ |
+| `social.personBase` | `NEXT_PUBLIC_SOCIAL_PERSON` | ✅ |
+| `social.economicResourceBase` | `NEXT_PUBLIC_SOCIAL_ECONOMIC_RESOURCE` | ✅ |
+| `oshUrl` | `NEXT_PUBLIC_OSH` | ✅ |
+| `loshId` | `NEXT_PUBLIC_LOSH_ID` | ❌ |
+| `zenflowsAdmin` | `NEXT_PUBLIC_ZENFLOWS_ADMIN` | ❌ |
+| `specs.machine` | `NEXT_PUBLIC_SPEC_MACHINE` | ❌ |
+| `specs.dpp` | `NEXT_PUBLIC_SPEC_DPP` | ❌ |
 
 ## Next Steps
 
-- [Tagging System](/guides/tagging-system) — classification and filter tags
-- [Authentication](/getting-started/authentication) — full Keypairoom auth flow
-- [Architecture](/guides/architecture) — how the facade pattern wires everything together
+- [Authentication](/getting-started/authentication) — puts the config to work with Keypairoom auth
+- [Client Guide](/guides/client) — sub-client lazy accessor pattern
+- [Architecture](/guides/architecture) — how all these endpoints connect
