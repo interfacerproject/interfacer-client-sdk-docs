@@ -102,7 +102,9 @@ function run() {
   iframe.style.display = "none";
   iframe.sandbox.add("allow-scripts");
 
-  // Build the iframe's HTML using a Blob URL (avoids srcdoc escaping issues)
+  // Build the iframe's HTML using a Blob URL and base64-encoded code
+  // (avoids all escaping issues with special characters in source code)
+  const encoded = btoa(unescape(encodeURIComponent(currentCode.value)));
   const html = `
     <script>
       console.log = function() {
@@ -122,7 +124,7 @@ function run() {
     <\/script>
     <script type="module">
       try {
-        ${currentCode.value}
+        eval(decodeURIComponent(escape(atob('${encoded}'))));
       } catch (err) {
         console.error(err.message);
       }
