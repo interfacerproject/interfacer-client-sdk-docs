@@ -18,7 +18,7 @@ export default defineConfig({
       { text: "Home", link: "/" },
       { text: "Guides", link: "/getting-started/installation" },
       { text: "Recipes", link: "/recipes/authenticate" },
-      { text: "API", link: "/api/" },
+      { text: "API", link: "/api/README" },
     ],
 
     sidebar: {
@@ -62,7 +62,7 @@ export default defineConfig({
       ],
       "/api/": [
         { text: "API Reference", items: [
-          { text: "Overview", link: "/api/" },
+          { text: "Overview", link: "/api/README" },
           { text: "InterfacerClient", link: "/api/classes/InterfacerClient" },
           { text: "AuthClient", link: "/api/classes/AuthClient" },
           { text: "ResourceClient", link: "/api/classes/ResourceClient" },
