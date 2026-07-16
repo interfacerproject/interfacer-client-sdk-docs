@@ -9,8 +9,8 @@ importers:
   .:
     devDependencies:
       '@dyne/interfacer-client':
-        specifier: ^0.3.5
-        version: 0.3.5(zenroom@5.37.2)
+        specifier: ^0.4.0
+        version: 0.4.0(zenroom@5.37.2)
       shiki:
         specifier: ^1.0.0
         version: 1.29.2
@@ -148,8 +148,8 @@ packages:
       search-insights:
         optional: true
 
-  '@dyne/interfacer-client@0.3.5':
-    resolution: {integrity: sha512-gSnk9BWSZaoDSVCQPiDBCBNdoCubfWAbIukJLfcOOuxs/AUH7D5E+A+0kE8ykdC81f4WwFspTDywNQwtAzn3ww==}
+  '@dyne/interfacer-client@0.4.0':
+    resolution: {integrity: sha512-+CIq9eJZlER1isosE+ZHI9qjUF6st/qVQHvKNdtKbPp+7X4fccV0o2fCiuGMpTKufbH1siQfISNcVBUacQGC3A==}
     peerDependencies:
       zenroom: ^5.36.1
 
@@ -1233,7 +1233,7 @@ snapshots:
     transitivePeerDependencies:
       - '@algolia/client-search'
 
-  '@dyne/interfacer-client@0.3.5(zenroom@5.37.2)':
+  '@dyne/interfacer-client@0.4.0(zenroom@5.37.2)':
     dependencies:
       base64url: 3.0.1
       zenroom: 5.37.2
