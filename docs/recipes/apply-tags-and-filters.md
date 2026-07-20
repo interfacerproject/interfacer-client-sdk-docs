@@ -140,25 +140,25 @@ This recipe shows the complete tag assembly pipeline used when creating or updat
 
 Raw text from a form input → canonical `tag-{slug}` form:
 
-<Playground label="Normalize" :code="step1Demo" />
+<!-- <Playground label="Normalize" :code="step1Demo" /> -->
 
 ## Step 2: Derived Filter Tags
 
 Convert structured product metadata into system classification tags. This is automatic — no manual tag writing needed:
 
-<Playground label="Filter Tags" :code="step2Demo" />
+<!-- <Playground label="Filter Tags" :code="step2Demo" /> -->
 
 ## Step 3: Reference Tags
 
 Tag machines, materials, and licenses used by the project:
 
-<Playground label="Reference Tags" :code="step3Demo" />
+<!-- <Playground label="Reference Tags" :code="step3Demo" /> -->
 
 ## Full Assembly
 
 Here is the complete pipeline — all four tag sources merged into a single `classifiedAs` array:
 
-<Playground label="Full Assembly" :code="fullDemo" />
+<!-- <Playground label="Full Assembly" :code="fullDemo" /> -->
 
 ## Using with createProject
 

@@ -88,13 +88,13 @@ The SDK is configured through a single `InterfacerConfig` object passed to `crea
 
 Best for simple setups — pass `proxyUrl` and all 10+ endpoints are computed automatically:
 
-<Playground label="Derived" :code="proxyDemo" />
+<!-- <Playground label="Derived" :code="proxyDemo" /> -->
 
 ### Explicit Mode (full control)
 
 The pattern used in `interfacer-gui` — every endpoint comes from environment variables. Explicit values always take precedence over derivation:
 
-<Playground label="Explicit (GUI pattern)" :code="explicitDemo" />
+<!-- <Playground label="Explicit (GUI pattern)" :code="explicitDemo" /> -->
 
 Use this when you need different URLs per environment (dev/staging/prod) or when services live on different hosts.
 
@@ -296,7 +296,7 @@ Used by `client.wallet.getTrend()` to compute point growth over a cycle.
 
 A pure utility — computes derived endpoints without creating a config:
 
-<Playground label="Derive" :code="deriveDemo" />
+<!-- <Playground label="Derive" :code="deriveDemo" /> -->
 
 Returns a `DerivedEndpoints` object:
 

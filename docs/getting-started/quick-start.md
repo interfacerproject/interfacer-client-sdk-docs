@@ -51,7 +51,7 @@ const client = new InterfacerClient({
 });
 ```
 
-<Playground label="Endpoint Derivation" :code="configDemo" />
+<!-- <Playground label="Endpoint Derivation" :code="configDemo" /> -->
 
 You can also specify each endpoint explicitly for full control.
 
@@ -59,7 +59,7 @@ You can also specify each endpoint explicitly for full control.
 
 All sub-clients are lazily initialized:
 
-<Playground label="Sub-Clients" :code="subClientsDemo" />
+<!-- <Playground label="Sub-Clients" :code="subClientsDemo" /> -->
 
 ## Next Steps
 

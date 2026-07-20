@@ -61,13 +61,13 @@ The SDK uses **Keypairoom** — deterministic key derivation from 5 personal cha
 
 ## 5-Step Flow
 
-<Playground label="Flow" :code="flowDemo" />
+<!-- <Playground label="Flow" :code="flowDemo" /> -->
 
 ## Shortcut: `client.register()`
 
 For the common case, the full 4-step registration is available as a single call:
 
-<Playground label="Register" :code="compositeDemo" />
+<!-- <Playground label="Register" :code="compositeDemo" /> -->
 
 ## Manual Steps
 

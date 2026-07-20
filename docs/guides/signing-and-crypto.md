@@ -72,7 +72,7 @@ All authenticated operations (mutations, DPP API calls, wallet points, inbox mes
 
 The SDK manages a **keyring** — a set of 5 keypairs derived from user challenges + a server-side HMAC shard:
 
-<Playground label="Keyring" :code="keypairDemo" />
+<!-- <Playground label="Keyring" :code="keypairDemo" /> -->
 
 ### Two Derivation Flows
 
@@ -96,7 +96,7 @@ await client.resources.createProject({ ... });
 await client.wallet.addPoints(agentId, Token.Idea, 1);
 ```
 
-<Playground label="Signing Headers" :code="signingDemo" />
+<!-- <Playground label="Signing Headers" :code="signingDemo" /> -->
 
 ### Manual Signing
 
@@ -121,7 +121,7 @@ const res = await fetch(config.zenflowsUrl, {
 
 The DPP microservice uses a different header format (`did-sign` + `did-pk`):
 
-<Playground label="DID Signing" :code="didDemo" />
+<!-- <Playground label="DID Signing" :code="didDemo" /> -->
 
 ### File Upload Signing
 

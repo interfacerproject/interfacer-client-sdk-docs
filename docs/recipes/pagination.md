@@ -50,7 +50,7 @@ const page = await client.resources.listResources(
 
 ## Forward Pagination
 
-<Playground label="Pagination Loop" :code="paginationDemo" />
+<!-- <Playground label="Pagination Loop" :code="paginationDemo" /> -->
 
 ## Backward Pagination
 

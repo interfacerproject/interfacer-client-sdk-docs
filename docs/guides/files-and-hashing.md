@@ -123,7 +123,7 @@ Zenflows uses Zenroom for its SHA-512 implementation (required for on-chain veri
 
 Prepare file descriptors, then upload:
 
-<Playground label="Zenflows Upload" :code="zenflowsDemo" />
+<!-- <Playground label="Zenflows Upload" :code="zenflowsDemo" /> -->
 
 **`prepFilesForZenflows`** hashes each file and returns a `ZenflowsFile[]` with `name`, `extension`, `hash`, `mimeType`, and `size`. These descriptors are included when calling `createProject` via the `images` parameter.
 
@@ -131,13 +131,13 @@ Prepare file descriptors, then upload:
 
 ## DPP Hashing
 
-<Playground label="Hash" :code="hashDemo" />
+<!-- <Playground label="Hash" :code="hashDemo" /> -->
 
 ## Image Utilities
 
 When reading image data from GraphQL responses (which include base64 `bin` data), use these helpers to construct data URLs:
 
-<Playground label="Image Helpers" :code="imageDemo" />
+<!-- <Playground label="Image Helpers" :code="imageDemo" /> -->
 
 ## DPP File Uploads
 
@@ -153,7 +153,7 @@ const models = await client.files.uploadModelsToDpp(modelFiles);
 // Returns ProjectModelMetadata[] — ready for createProject metadata
 ```
 
-<Playground label="DPP Model Upload" :code="dppModelDemo" />
+<!-- <Playground label="DPP Model Upload" :code="dppModelDemo" /> -->
 
 ## Conversion: DPP Attachment → Model Metadata
 
@@ -170,7 +170,7 @@ const model = client.files.dppAttachmentToProjectModel(attachment);
 
 All file operations are accessed through `client.files`:
 
-<Playground label="Client API" :code="proxyDemo" />
+<!-- <Playground label="Client API" :code="proxyDemo" /> -->
 
 ## Standalone Functions
 

@@ -107,11 +107,11 @@ The wallet system tracks two token types: **Idea Points** for reputation and **S
 
 ## Check Balance
 
-<Playground label="Balance" :code="balanceDemo" />
+<!-- <Playground label="Balance" :code="balanceDemo" /> -->
 
 ## Award Points
 
-<Playground label="Award" :code="addDemo" />
+<!-- <Playground label="Award" :code="addDemo" /> -->
 
 The `addPoints` call is signed with the authenticated user's EdDSA key. The server validates the signature and records the transaction on the wallet ledger.
 
@@ -119,11 +119,11 @@ The `addPoints` call is signed with the authenticated user's EdDSA key. The serv
 
 Track point growth over a period (cycle, month, week):
 
-<Playground label="Trend" :code="trendDemo" />
+<!-- <Playground label="Trend" :code="trendDemo" /> -->
 
 ## Points Distribution (from Interfacer GUI)
 
-<Playground label="Distribution" :code="pointsDemo" />
+<!-- <Playground label="Distribution" :code="pointsDemo" /> -->
 
 ## Real Usage Pattern (from Interfacer GUI)
 

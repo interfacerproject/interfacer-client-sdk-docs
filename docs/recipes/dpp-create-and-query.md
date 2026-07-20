@@ -89,7 +89,7 @@ The Digital Product Passport (DPP) is a microservice that stores structured prod
 
 Passports start in `draft` status and are linked to a product resource on Zenflows:
 
-<Playground label="Create DPP" :code="createDemo" />
+<!-- <Playground label="Create DPP" :code="createDemo" /> -->
 
 ### Linking to a Zenflows Resource
 
@@ -111,7 +111,7 @@ await client.resources.citeResource(dppResource.id, processId);
 
 ## Query, Filter & Update
 
-<Playground label="Query DPPs" :code="queryDemo" />
+<!-- <Playground label="Query DPPs" :code="queryDemo" /> -->
 
 ### ListDppsFilters
 
@@ -130,7 +130,7 @@ You can also use `client.dpp.updateDpp(id, data)` to update any fields on an exi
 
 ## Attachments & QR Codes
 
-<Playground label="Attachments" :code="attachmentDemo" />
+<!-- <Playground label="Attachments" :code="attachmentDemo" /> -->
 
 ## Full Lifecycle
 

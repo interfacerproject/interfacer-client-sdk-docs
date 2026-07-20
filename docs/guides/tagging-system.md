@@ -169,25 +169,25 @@ manufacturable-true       — special flag
 
 Normalizes any text into a canonical tag slug:
 
-<Playground label="Slugify" :code="slugifyDemo" />
+<!-- <Playground label="Slugify" :code="slugifyDemo" /> -->
 
 ### User Tags: `userTag`, `isUserTag`, `stripUserTagPrefix`
 
 User-entered tags are wrapped with the `tag-` prefix to distinguish them from system-generated metadata:
 
-<Playground label="User Tags" :code="userTagDemo" />
+<!-- <Playground label="User Tags" :code="userTagDemo" /> -->
 
 ### Extracting & Identifying Tags
 
 Given a resource's `classifiedAs` array, you need to know which tags are user-visible and which are system-derived:
 
-<Playground label="Extract & Identify" :code="extractDemo" />
+<!-- <Playground label="Extract & Identify" :code="extractDemo" /> -->
 
 ### Normalizing for Save
 
 Before saving user input, normalize it to canonical form. System-prefixed entries are dropped:
 
-<Playground label="Normalize" :code="normalizeDemo" />
+<!-- <Playground label="Normalize" :code="normalizeDemo" /> -->
 
 ## Numeric Range Tags
 
@@ -195,7 +195,7 @@ The most powerful feature — numeric values are converted into bounded range ta
 
 Given a device rated at **60W**:
 
-<Playground label="Range Tags" :code="rangeDemo" />
+<!-- <Playground label="Range Tags" :code="rangeDemo" /> -->
 
 This produces **ge-** (greater-or-equal) tags for all thresholds ≤ 60W, and **le-** (less-or-equal) tags for all thresholds ≥ 60W. A search for `powerreq-le-75` matches everything consuming ≤ 75W. A search for `powerreq-ge-50` matches everything consuming ≥ 50W. Combine both for exact ranges.
 
@@ -203,7 +203,7 @@ This produces **ge-** (greater-or-equal) tags for all thresholds ≤ 60W, and **
 
 When a user fills in product/service filter metadata, `derivedProductFilterTags` generates all system tags automatically:
 
-<Playground label="Derived Tags" :code="derivedDemo" />
+<!-- <Playground label="Derived Tags" :code="derivedDemo" /> -->
 
 Each field maps to the appropriate prefix using constants:
 - `categories[]` → `category-{slug}`
@@ -219,7 +219,7 @@ Each field maps to the appropriate prefix using constants:
 
 Here's the actual pattern used when creating a project — merging user tags, machine/material references, and derived filter tags into a single `classifiedAs` array:
 
-<Playground label="Full Merge" :code="mergeDemo" />
+<!-- <Playground label="Full Merge" :code="mergeDemo" /> -->
 
 ## Tag Prefix Reference
 

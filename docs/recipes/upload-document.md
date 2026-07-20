@@ -67,13 +67,13 @@ The SDK supports dual file storage — Zenflows for general file uploads and DPP
 
 Hash files, upload, pass descriptors to project creation:
 
-<Playground label="Zenflows" :code="uploadDemo" />
+<!-- <Playground label="Zenflows" :code="uploadDemo" /> -->
 
 ## Upload to DPP
 
 For images and 3D models, DPP storage offers higher quality and a dedicated CDN:
 
-<Playground label="DPP Images" :code="dppDemo" />
+<!-- <Playground label="DPP Images" :code="dppDemo" /> -->
 
 ## Model File Upload
 

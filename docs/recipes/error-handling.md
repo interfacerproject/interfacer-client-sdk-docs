@@ -87,11 +87,11 @@ if (res.errors?.length) {
 
 ## Retry with Backoff
 
-<Playground label="Retry Logic" :code="retryDemo" />
+<!-- <Playground label="Retry Logic" :code="retryDemo" /> -->
 
 ## Timeout Wrapper
 
-<Playground label="Timeout" :code="timeoutDemo" />
+<!-- <Playground label="Timeout" :code="timeoutDemo" /> -->
 
 ## Wrap Async Operations
 

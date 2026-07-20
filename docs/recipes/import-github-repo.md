@@ -83,7 +83,7 @@ The import client auto-populates project creation forms by fetching metadata fro
 
 Fetches repository name, description, topics (as tags), and SPDX license:
 
-<Playground label="GitHub Import" :code="githubDemo" />
+<!-- <Playground label="GitHub Import" :code="githubDemo" /> -->
 
 The method parses a GitHub URL into `owner/repo` and queries:
 1. **Repository metadata** — `/repos/{owner}/{repo}` → `name`, `description`, `html_url`, `topics`
@@ -94,7 +94,7 @@ The method parses a GitHub URL into `owner/repo` and queries:
 
 Fetches project metadata from a GitLab instance:
 
-<Playground label="GitLab Import" :code="gitlabDemo" />
+<!-- <Playground label="GitLab Import" :code="gitlabDemo" /> -->
 
 Uses the GitLab v4 API: `{host}/api/v4/projects/{projectId}`.
 
@@ -102,13 +102,13 @@ Uses the GitLab v4 API: `{host}/api/v4/projects/{projectId}`.
 
 Verify OSH compliance through the OSH analysis service:
 
-<Playground label="OSH Check" :code="oshDemo" />
+<!-- <Playground label="OSH Check" :code="oshDemo" /> -->
 
 ## Full Import → Create Flow
 
 Combine import with project creation for a full auto-population workflow:
 
-<Playground label="Full Flow" :code="fullDemo" />
+<!-- <Playground label="Full Flow" :code="fullDemo" /> -->
 
 ## Configuration
 

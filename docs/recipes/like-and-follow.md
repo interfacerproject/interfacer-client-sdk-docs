@@ -86,19 +86,19 @@ Social interactions use the ActivityStreams protocol via signed REST endpoints. 
 
 Posts a `Like` activity to the ActivityPub outbox:
 
-<Playground label="Like" :code="likeDemo" />
+<!-- <Playground label="Like" :code="likeDemo" /> -->
 
 ## Check Like Status
 
 Query the like state for UI display:
 
-<Playground label="Check Likes" :code="checkDemo" />
+<!-- <Playground label="Check Likes" :code="checkDemo" /> -->
 
 ## Follow a Resource
 
 Following sends ActivityPub updates when the resource changes:
 
-<Playground label="Follow" :code="followDemo" />
+<!-- <Playground label="Follow" :code="followDemo" /> -->
 
 ## Full Social API
 

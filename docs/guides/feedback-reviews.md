@@ -93,13 +93,13 @@ The `feedbackUrl` is **not derived from `proxyUrl`** — pass it explicitly.
 
 ## API Overview
 
-<Playground label="SDK API" :code="sdkDemo" />
+<!-- <Playground label="SDK API" :code="sdkDemo" /> -->
 
 ## Reviews
 
 ### Create a Review
 
-<Playground label="Create Review" :code="createReview" />
+<!-- <Playground label="Create Review" :code="createReview" /> -->
 
 Each user can only have **one review per project**. Submitting a second one updates the existing. Ratings are integers 1-5.
 
@@ -126,7 +126,7 @@ await client.feedback.deleteReview(reviewId);
 
 ## Comments
 
-<Playground label="Comments" :code="commentDemo" />
+<!-- <Playground label="Comments" :code="commentDemo" /> -->
 
 Comments support threading via `parent_id`. Set it to a review or comment ID for replies.
 

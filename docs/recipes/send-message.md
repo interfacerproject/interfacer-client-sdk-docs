@@ -68,7 +68,7 @@ The inbox system handles user-to-user notifications and messaging via signed RES
 
 Messages are signed JSON payloads sent to one or more receivers:
 
-<Playground label="Send" :code="sendDemo" />
+<!-- <Playground label="Send" :code="sendDemo" /> -->
 
 The `message` parameter can be any serializable object — the Interfacer GUI defines specific notification types like `ProposalNotification`, `AddedAsContributorNotification`, etc.
 
@@ -76,13 +76,13 @@ The `message` parameter can be any serializable object — the Interfacer GUI de
 
 Messages are returned sorted by date (newest first):
 
-<Playground label="Read" :code="readDemo" />
+<!-- <Playground label="Read" :code="readDemo" /> -->
 
 ## Unread Count & Mark Read
 
 For notification badges:
 
-<Playground label="Unread" :code="unreadDemo" />
+<!-- <Playground label="Unread" :code="unreadDemo" /> -->
 
 ## Notification Types (from Interfacer GUI)
 

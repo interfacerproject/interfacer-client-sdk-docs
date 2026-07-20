@@ -72,7 +72,7 @@ const { data, loading, error, refetch } = useSdkQuery(GET_PROJECTS, {
 });
 ```
 
-<Playground label="useSdkQuery" :code="queryDemo" />
+<!-- <Playground label="useSdkQuery" :code="queryDemo" /> -->
 
 ### API Compatibility
 
@@ -103,7 +103,7 @@ const [createProject, { loading, error }] = useSdkMutation(CREATE_PROJECT);
 await createProject({ variables: { name: "Widget" } });
 ```
 
-<Playground label="useSdkMutation" :code="mutationDemo" />
+<!-- <Playground label="useSdkMutation" :code="mutationDemo" /> -->
 
 ### API Compatibility
 

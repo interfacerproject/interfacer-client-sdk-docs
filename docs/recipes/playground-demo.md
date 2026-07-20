@@ -82,12 +82,12 @@ Run these examples directly in your browser. Each is editable — modify and re-
 
 ## CDN Import
 
-<Playground label="SDK Import" :code="demos.cdn" />
+<!-- <Playground label="SDK Import" :code="demos.cdn" /> -->
 
 ## Endpoint Derivation
 
-<Playground label="Config" :code="demos.config" />
+<!-- <Playground label="Config" :code="demos.config" /> -->
 
 ## Tagging
 
-<Playground label="Classification" :code="demos.tagging" />
+<!-- <Playground label="Classification" :code="demos.tagging" /> -->

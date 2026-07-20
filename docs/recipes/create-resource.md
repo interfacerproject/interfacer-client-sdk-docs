@@ -81,7 +81,7 @@ Resources are the foundation of the Interfacer ecosystem — Designs, Products, 
 
 ## Create a Design
 
-<Playground label="Design" :code="designDemo" />
+<!-- <Playground label="Design" :code="designDemo" /> -->
 
 **Auto-created:** A `Process` (tracking the creation event) and a `Location` (if location params are provided) are created automatically. Pass pre-created IDs via `processId` and `locationId` to avoid duplicates.
 
@@ -89,7 +89,7 @@ Resources are the foundation of the Interfacer ecosystem — Designs, Products, 
 
 Products reference tags for classification and can cite the design they derive from:
 
-<Playground label="Product" :code="productDemo" />
+<!-- <Playground label="Product" :code="productDemo" /> -->
 
 See [Apply Tags & Filters](/recipes/apply-tags-and-filters) for the full tag assembly pipeline used in production.
 
@@ -97,7 +97,7 @@ See [Apply Tags & Filters](/recipes/apply-tags-and-filters) for the full tag ass
 
 Machines are created with a separate method and spec:
 
-<Playground label="Machine" :code="machineDemo" />
+<!-- <Playground label="Machine" :code="machineDemo" /> -->
 
 ## Create a DPP-Resource Link
 
